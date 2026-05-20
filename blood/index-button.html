@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Research Hub · CNN ABO Blood Group Classification</title>
+  <link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-body: #f4f7fd;
+      --bg-card: #ffffff;
+      --bg-soft: #f8fafc;
+      --border-light: #e2edf2;
+      --text-main: #0b2b3b;
+      --text-muted: #2c5a6e;
+      --accent-primary: #2563eb;
+      --accent-hover: #1d4ed8;
+      --shadow-sm: 0 6px 14px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.05);
+      --table-header: #eef2ff;
+    }
+    body.dark {
+      --bg-body: #0d1117;
+      --bg-card: #161b22;
+      --bg-soft: #1c2128;
+      --border-light: #2d333b;
+      --text-main: #e6edf3;
+      --text-muted: #9cb3cc;
+      --accent-primary: #3b82f6;
+      --accent-hover: #60a5fa;
+      --table-header: #1e293b;
+    }
+
+    body {
+      background: var(--bg-body);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+      color: var(--text-main);
+      transition: background 0.2s, color 0.2s;
+      padding: 2rem 1.2rem;
+      line-height: 1.45;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+    }
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-badge i {
+      font-size: 1.8rem;
+      color: var(--accent-primary);
+    }
+    .logo-badge h1 {
+      font-size: 1.55rem;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      background: linear-gradient(125deg, var(--text-main), var(--accent-primary));
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .theme-toggle {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 40px;
+      padding: 0.4rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: 0.2s;
+    }
+    .theme-toggle:hover {
+      transform: scale(0.96);
+      border-color: var(--accent-primary);
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: 1.5rem;
+      border: 1px solid var(--border-light);
+      padding: 1.5rem 1.8rem;
+      margin-bottom: 1.8rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.1s ease;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+      border-left: 4px solid var(--accent-primary);
+      padding-left: 0.8rem;
+    }
+    .card-header i {
+      font-size: 1.5rem;
+      color: var(--accent-primary);
+    }
+    .card-header h2 {
+      font-size: 1.35rem;
+      font-weight: 600;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--bg-soft);
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--accent-primary);
+      margin-bottom: 0.8rem;
+    }
+    .dataset-grid,
+    .gap-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .dataset-item {
+      background: var(--bg-soft);
+      border-radius: 1rem;
+      padding: 0.8rem 1rem;
+      flex: 1 1 240px;
+      border: 1px solid var(--border-light);
+    }
+    .dataset-item strong {
+      color: var(--accent-primary);
+    }
+    .gap-item {
+      background: var(--bg-soft);
+      border-radius: 1rem;
+      padding: 0.7rem 1rem;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      width: 100%;
+    }
+    .gap-item i {
+      margin-top: 2px;
+      color: var(--accent-primary);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      margin: 1rem 0;
+    }
+    th,
+    td {
+      border: 1px solid var(--border-light);
+      padding: 0.6rem 0.8rem;
+      text-align: left;
+    }
+    th {
+      background: var(--table-header);
+      font-weight: 600;
+    }
+    .positioning {
+      background: var(--bg-soft);
+      border-left: 4px solid var(--accent-primary);
+      padding: 1rem;
+      border-radius: 1rem;
+      font-style: italic;
+      margin: 1rem 0;
+    }
+    .btn-timeline {
+      background: var(--accent-primary);
+      border: none;
+      padding: 0.8rem 1.8rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+      margin: 0.5rem 0;
+    }
+    .btn-timeline:hover {
+      background: var(--accent-hover);
+      transform: scale(0.97);
+    }
+
+    /* NEW FANCY NAV BUTTONS STYLES */
+    .fancy-nav-section {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin: 2.5rem 0 1.8rem;
+    }
+    .fancy-nav-btn {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0.85rem 1.6rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      border: none;
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1.5px solid var(--border-light);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      white-space: nowrap;
+      letter-spacing: -0.01em;
+    }
+    .fancy-nav-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(37,99,235,0.06), transparent);
+      transition: left 0.5s ease;
+    }
+    .fancy-nav-btn:hover::before {
+      left: 100%;
+    }
+    .fancy-nav-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px rgba(37,99,235,0.15);
+      border-color: var(--accent-primary);
+    }
+    .fancy-nav-btn:active {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(37,99,235,0.12);
+    }
+    .fancy-nav-btn i {
+      font-size: 1.3rem;
+      color: var(--accent-primary);
+      transition: transform 0.25s ease;
+    }
+    .fancy-nav-btn:hover i {
+      transform: scale(1.18) rotate(-3deg);
+    }
+    .fancy-nav-btn:nth-child(1):hover {
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      border-color: #2563eb;
+    }
+    .fancy-nav-btn:nth-child(2):hover {
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      border-color: #16a34a;
+    }
+    .fancy-nav-btn:nth-child(3):hover {
+      background: linear-gradient(135deg, #fefce8, #fef9c3);
+      border-color: #ca8a04;
+    }
+    .fancy-nav-btn:nth-child(4):hover {
+      background: linear-gradient(135deg, #fdf2f8, #fce7f3);
+      border-color: #db2777;
+    }
+    body.dark .fancy-nav-btn:nth-child(1):hover {
+      background: linear-gradient(135deg, #1e293b, #1e3a5f);
+    }
+    body.dark .fancy-nav-btn:nth-child(2):hover {
+      background: linear-gradient(135deg, #1e293b, #14532d);
+    }
+    body.dark .fancy-nav-btn:nth-child(3):hover {
+      background: linear-gradient(135deg, #1e293b, #5c4b0a);
+    }
+    body.dark .fancy-nav-btn:nth-child(4):hover {
+      background: linear-gradient(135deg, #1e293b, #5c1a3a);
+    }
+
+    .fancy-nav-btn .btn-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-left: 2px;
+      transition: all 0.25s ease;
+    }
+    .fancy-nav-btn:nth-child(1) .btn-dot { background: #2563eb; }
+    .fancy-nav-btn:nth-child(2) .btn-dot { background: #16a34a; }
+    .fancy-nav-btn:nth-child(3) .btn-dot { background: #ca8a04; }
+    .fancy-nav-btn:nth-child(4) .btn-dot { background: #db2777; }
+    .fancy-nav-btn:hover .btn-dot {
+      transform: scale(1.6);
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    @media (max-width: 600px) {
+      .fancy-nav-btn {
+        flex: 1 1 130px;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        font-size: 0.78rem;
+      }
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: 0.2s;
+    }
+    .modal-overlay.active {
+      visibility: visible;
+      opacity: 1;
+    }
+    .modal-container {
+      background: var(--bg-card);
+      width: 90%;
+      max-width: 880px;
+      max-height: 85vh;
+      border-radius: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      background: var(--bg-soft);
+      border-bottom: 1px solid var(--border-light);
+    }
+    .modal-body {
+      overflow-y: auto;
+      padding: 0.2rem;
+    }
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.7rem;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+    hr {
+      border-color: var(--border-light);
+      margin: 0.5rem 0;
+    }
+    @media (max-width: 700px) {
+      .card {
+        padding: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-bar">
+      <div class="logo-badge">
+        <i class="ti ti-microscope"></i>
+        <h1>HemoType<span style="font-weight:400"> · ABO Research</span></h1>
+      </div>
+      <div class="theme-toggle" id="themeToggleHub">
+        <i class="ti ti-sun" id="themeIconHub"></i>
+        <span id="themeLabelHub">Light mode</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="ti ti-news"></i><h2>CNN‑Based Blood Group Classification</h2></div>
+      <p>Automated ABO blood group detection from microscopic / agglutination images using deep learning. This project systematically addresses the lack of public ABO-labeled datasets, introduces explainable AI (Grad‑CAM), and benchmarks modern lightweight architectures. Built on a 30‑day structured research plan with IEEE‑format publication output.</p>
+      <div style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+        <span class="badge">📊 4/8 classes (ABO / Rh+)</span>
+        <span class="badge">🧠 MobileNetV2 + EfficientNet</span>
+        <span class="badge">🔍 Grad‑CAM explainability</span>
+        <span class="badge">📄 IEEE template ready</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="ti ti-database"></i><h2>Available Public Datasets</h2></div>
+      <div class="dataset-grid">
+        <div class="dataset-item"><strong>🏥 PBC Dataset (Barcelona)</strong> — 17,092 cells, 8 types, 360×363px. <br><span style="font-size:0.7rem;">DOI:10.1016/j.dib.2020.105474</span><br>✅ Primary recommendation for morphology baseline.</div>
+        <div class="dataset-item"><strong>🩸 BCCD</strong> — 364 annotated images (WBC,RBC,platelets). Object detection style.</div>
+        <div class="dataset-item"><strong>📦 TXL-PBC (Nature 2025)</strong> — Merged 4 sources, 1,260 images, 18k annotations.</div>
+        <div class="dataset-item"><strong>🔬 MLL Dataset (Nature 2025)</strong> — >40,000 single-cell images, 18 classes, largest hematology lab.</div>
+        <div class="dataset-item"><strong>🧬 Kaggle: Blood Cells Image Dataset</strong> — no direct ABO labels, usable for transfer learning.</div>
+        <div class="dataset-item"><strong>📄 IEEE 2022 Custom ABO Dataset</strong> — self-created, unpublished, 96.7% accuracy (most relevant prior work).</div>
+      </div>
+      <div class="positioning">
+        <strong>📌 Dataset strategy for your paper:</strong> Since no large public ABO-labeled microscopic dataset exists, we can either (a) construct a custom agglutination card dataset, or (b) frame the pipeline using PBC dataset for morphology + ABO inference as a novel extension. The timeline incorporates custom dataset creation and preprocessing.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="ti ti-file-description"></i><h2>Prior Work & Research Gaps</h2></div>
+      <p><strong>Key directly related paper:</strong> IEEE ICCCNT 2022 — custom CNN on ABO images, 96.7% accuracy, but no XAI, no Rh factor, no modern backbones.</p>
+      <div class="gap-list">
+        <div class="gap-item"><i class="ti ti-chart-bubble"></i><span><strong>Gap 1</strong> — No public ABO-labeled microscopic dataset → your contribution can be a reproducible dataset.</span></div>
+        <div class="gap-item"><i class="ti ti-eye"></i><span><strong>Gap 2</strong> — No explainability in ABO classification → add Grad‑CAM, SHAP, LIME.</span></div>
+        <div class="gap-item"><i class="ti ti-switch-horizontal"></i><span><strong>Gap 3</strong> — No comparison of MobileNetV2 / EfficientNet for ABO task.</span></div>
+        <div class="gap-item"><i class="ti ti-plus"></i><span><strong>Gap 4</strong> — Rh factor (8-class: A+,A-,B+,B-,AB+,AB-,O+,O-) unexplored.</span></div>
+        <div class="gap-item"><i class="ti ti-chart-pie"></i><span><strong>Gap 5</strong> — Class imbalance (O common, AB rare) not addressed.</span></div>
+        <div class="gap-item"><i class="ti ti-world"></i><span><strong>Gap 6</strong> — Geographic/population bias, lack of generalisation discussion.</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="ti ti-chart-line"></i><h2>Accuracy Benchmarks to Beat</h2></div>
+      <table>
+        <thead><tr><th>Paper / Model</th><th>Task</th><th>Accuracy</th></tr></thead>
+        <tbody>
+          <tr><td>IEEE 2022 (Custom CNN)</td><td>ABO blood group</td><td><strong>96.7%</strong></td></tr>
+          <tr><td>Islam et al. 2024 (Optimized CNN+XAI)</td><td>WBC classification</td><td>99.12%</td></tr>
+          <tr><td>Gavas & Olpadkar 2021 (ensemble)</td><td>PBC cell type</td><td>99.51%</td></tr>
+          <tr><td>MobileNetV2 (2024 benchmark)</td><td>WBC</td><td>~98.58%</td></tr>
+          <tr><td>EfficientNet-B3 (2025)</td><td>Leukemia ALL</td><td>94.30% F1</td></tr>
+        </tbody>
+      </table>
+      <p>🎯 <strong>Your target:</strong> surpass 96.7% using improved preprocessing (CLAHE), transfer learning (MobileNetV2/EfficientNetB0), Grad‑CAM explainability, and proper validation.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="ti ti-quote"></i><h2>Positioning Statement (Abstract/Intro)</h2></div>
+      <div class="positioning">
+        "While prior studies have demonstrated CNN‑based classification of peripheral blood cell subtypes with high accuracy, the specific problem of automated ABO blood group classification from microscopic images remains underexplored, with limited publicly available labeled datasets and no work addressing explainability or comparison of modern lightweight architectures. This study proposes a CNN‑based pipeline for ABO blood group classification incorporating optimized preprocessing, transfer learning via MobileNetV2/EfficientNet, and Grad‑CAM‑based explainability, providing a transparent, efficient, and reproducible framework for AI‑assisted hematological diagnostics."
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><i class="ti ti-layout-2"></i><h2>Suggested Paper Structure (IEEE Format)</h2></div>
+      <ul style="margin-left: 1.5rem; color: var(--text-muted);">
+        <li>1. Abstract (~250 words)</li>
+        <li>2. Introduction – importance of blood typing, AI motivation</li>
+        <li>3. Related Work – 10–15 citations (PBC, IEEE 2022, XAI papers)</li>
+        <li>4. Dataset Description – custom / PBC / agglutination, class distribution</li>
+        <li>5. Proposed Methodology – preprocessing, CNN + transfer learning, Grad‑CAM</li>
+        <li>6. Experimental Results – accuracy, precision, recall, F1, confusion matrix</li>
+        <li>7. Comparative Analysis – vs AlexNet, LeNet5, MobileNetV2 baseline</li>
+        <li>8. Discussion – gaps, limitations, interpretability</li>
+        <li>9. Conclusion & Future Work – Rh factor, real-time deployment</li>
+        <li>10. References (IEEE format, 15–20 entries)</li>
+      </ul>
+      <div class="badge" style="margin-top: 0.5rem;">📚 Recommended citations: Acevedo 2020, IEEE 2022 ABO, Islam 2024, Gavas 2021, PLOS ONE scoping review, etc.</div>
+    </div>
+
+    <div style="text-align: center; margin: 1rem 0 2rem;">
+      <button class="btn-timeline" id="showTimelineBtnMain">
+        <i class="ti ti-calendar-time"></i> View 30‑Day Research Timeline (Interactive)
+      </button>
+    </div>
+
+    <!-- NEW FANCY NAVIGATION BUTTONS (4 BUTTONS) -->
+    <div class="fancy-nav-section">
+      <button class="fancy-nav-btn" onclick="scrollToTop()" title="Back to top overview">
+        <i class="ti ti-home-2"></i> Overview <span class="btn-dot"></span>
+      </button>
+      <button class="fancy-nav-btn" onclick="openModal()" title="30-day research plan">
+        <i class="ti ti-calendar-event"></i> Timeline <span class="btn-dot"></span>
+      </button>
+      <button class="fancy-nav-btn" onclick="alert('📂 Datasets section: scroll up to view PBC, BCCD, TXL-PBC, MLL, Kaggle, and IEEE 2022 custom dataset details.')" title="Explore datasets">
+        <i class="ti ti-database"></i> Datasets <span class="btn-dot"></span>
+      </button>
+      <button class="fancy-nav-btn" onclick="alert('📄 Paper structure: IEEE 2-column format with 10 sections. See the Suggested Paper Structure card above for full outline.')" title="Paper structure & writing guide">
+        <i class="ti ti-file-text"></i> Paper Guide <span class="btn-dot"></span>
+      </button>
+    </div>
+
+    <div style="text-align: center; font-size: 0.7rem; color: var(--text-muted); border-top: 1px solid var(--border-light); padding-top: 1rem;">
+      <i class="ti ti-brand-github"></i> Reproducible pipeline · ABO classification · Explainable AI
+    </div>
+  </div>
+
+  <div id="timelineModal" class="modal-overlay">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 style="display: flex; gap: 8px;"><i class="ti ti-chart-infographic"></i> 1‑Month Research Plan — CNN Blood Group</h3>
+        <button class="close-modal" id="closeModalBtnMain">&times;</button>
+      </div>
+      <div class="modal-body" id="modalBodyTimeline">
+        <div style="padding: 1rem;">Loading enhanced timeline...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setTheme(theme) {
+      const body = document.body;
+      const icon = document.getElementById('themeIconHub');
+      const label = document.getElementById('themeLabelHub');
+      if (theme === 'dark') {
+        body.classList.add('dark');
+        localStorage.setItem('aboThemeHub', 'dark');
+        if (icon) icon.className = 'ti ti-moon';
+        if (label) label.innerText = 'Dark mode';
+      } else {
+        body.classList.remove('dark');
+        localStorage.setItem('aboThemeHub', 'light');
+        if (icon) icon.className = 'ti ti-sun';
+        if (label) label.innerText = 'Light mode';
+      }
+    }
+    const savedTheme = localStorage.getItem('aboThemeHub');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (savedTheme === 'dark') setTheme('dark');
+    else if (savedTheme === 'light') setTheme('light');
+    else if (prefersDark) setTheme('dark');
+    else setTheme('light');
+    document.getElementById('themeToggleHub')?.addEventListener('click', () => {
+      const isDark = document.body.classList.contains('dark');
+      setTheme(isDark ? 'light' : 'dark');
+    });
+
+    function buildTimelineHTML() {
+      return `
+      <style>
+        .plan-modal { padding: 1rem; font-size: 13px; }
+        .phase-card { border: 1px solid var(--border-light); background: var(--bg-card); border-radius: 1rem; margin-bottom: 12px; overflow: hidden; }
+        .phase-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg-soft); border-bottom: 1px solid var(--border-light); flex-wrap: wrap; }
+        .phase-bdg { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 30px; }
+        .phase-title { font-weight: 600; font-size: 13px; }
+        .phase-days { font-size: 10px; margin-left: auto; background: var(--bg-card); padding: 2px 8px; border-radius: 30px; }
+        .tasks-list { padding: 10px 14px 12px; display: flex; flex-direction: column; gap: 8px; }
+        .task-item { display: flex; gap: 8px; font-size: 12px; color: var(--text-muted); align-items: flex-start; }
+        .task-item i { font-size: 13px; margin-top: 1px; color: var(--accent-primary); }
+        .timeline-bar-sm { display: flex; gap: 3px; margin-bottom: 12px; height: 8px; border-radius: 8px; overflow: hidden; }
+        .legend-sm { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .tip-note { background: var(--bg-soft); padding: 8px 12px; border-radius: 12px; border-left: 3px solid var(--accent-primary); font-size: 11px; margin-top: 8px; }
+        .divider-light { height: 1px; background: var(--border-light); margin: 0 14px; }
+      </style>
+      <div class="plan-modal">
+        <div class="timeline-bar-sm">
+          <div style="flex:5; background:#9FE1CB"></div><div style="flex:7; background:#B5D4F4"></div>
+          <div style="flex:8; background:#AFA9EC"></div><div style="flex:5; background:#FAC775"></div><div style="flex:5; background:#F4C0D1"></div>
+        </div>
+        <div class="legend-sm">
+          <span><span style="background:#9FE1CB; display:inline-block; width:10px; height:10px; border-radius:2px;"></span> Data</span>
+          <span><span style="background:#B5D4F4; display:inline-block; width:10px; height:10px;"></span> Preproc</span>
+          <span><span style="background:#AFA9EC; display:inline-block; width:10px; height:10px;"></span> Model</span>
+          <span><span style="background:#FAC775; display:inline-block; width:10px; height:10px;"></span> Optimize</span>
+          <span><span style="background:#F4C0D1; display:inline-block; width:10px; height:10px;"></span> Paper</span>
+        </div>
+        <div class="phase-card"><div class="phase-head"><div class="phase-bdg" style="background:#E1F5EE;color:#0F6E56">Week 1</div><span class="phase-title">📂 Dataset & literature (ABO focus)</span><span class="phase-days">Days 1–5</span></div><div class="divider-light"></div><div class="tasks-list"><div class="task-item"><i class="ti ti-database"></i> Acquire PBC dataset + custom ABO-labeled images (agglutination cards).</div><div class="task-item"><i class="ti ti-file-text"></i> Review IEEE 2022 ABO paper, XAI papers (Islam et al. 2024).</div><div class="task-item"><i class="ti ti-folder"></i> Organise into A, B, AB, O (or 8-class Rh extension).</div><div class="task-item"><i class="ti ti-chart-bar"></i> Analyse class imbalance (rare AB), plan SMOTE / weighted loss.</div><div class="task-item"><i class="ti ti-file-text"></i> Draft Introduction + Related Work (cite gaps #1-6).</div></div></div>
+        <div class="phase-card"><div class="phase-head"><div class="phase-bdg" style="background:#E6F1FB;color:#185FA5">Week 1–2</div><span class="phase-title">🛠️ Preprocessing pipeline</span><span class="phase-days">Days 4–10</span></div><div class="divider-light"></div><div class="tasks-list"><div class="task-item"><i class="ti ti-crop"></i> Resize → 224×224, apply CLAHE & histogram equalisation (stain normalisation).</div><div class="task-item"><i class="ti ti-filter"></i> Gaussian blur / denoising (OpenCV).</div><div class="task-item"><i class="ti ti-refresh"></i> Augmentation: rotation, flip, zoom, brightness shift, elastic transforms.</div><div class="task-item"><i class="ti ti-layout-grid"></i> Train/val/test split 70/15/15; save splits with class weights.</div><div class="task-item"><i class="ti ti-chart-pie"></i> Address class imbalance via weighted categorical crossentropy.</div></div></div>
+        <div class="phase-card"><div class="phase-head"><div class="phase-bdg" style="background:#EEEDFE;color:#534AB7">Week 2–3</div><span class="phase-title">🧠 Model development & training</span><span class="phase-days">Days 8–18</span></div><div class="divider-light"></div><div class="tasks-list"><div class="task-item"><i class="ti ti-brand-python"></i> Build custom CNN (4 conv blocks) + MobileNetV2 / EfficientNetB0 (transfer learning).</div><div class="task-item"><i class="ti ti-arrows-transfer-up"></i> Compare frozen vs fine-tuned backbones.</div><div class="task-item"><i class="ti ti-player-play"></i> Train 30–50 epochs, early stopping, ReduceLROnPlateau.</div><div class="task-item"><i class="ti ti-chart-line"></i> Plot accuracy/loss; save best checkpoint (val accuracy).</div><div class="task-item"><i class="ti ti-table"></i> Confusion matrix, per-class F1, precision, recall, AUC-ROC.</div></div></div>
+        <div class="phase-card"><div class="phase-head"><div class="phase-bdg" style="background:#FAEEDA;color:#854F0B">Week 3–4</div><span class="phase-title">🔍 Explainability (Grad-CAM) & hyperparameter tuning</span><span class="phase-days">Days 18–24</span></div><div class="divider-light"></div><div class="tasks-list"><div class="task-item"><i class="ti ti-eye"></i> Implement Grad-CAM (and optionally SHAP) to highlight agglutination regions.</div><div class="task-item"><i class="ti ti-settings"></i> Tune LR, dropout (0.3–0.5), batch size (16/32).</div><div class="task-item"><i class="ti ti-percentage"></i> Report final metrics: accuracy, sensitivity, specificity.</div><div class="task-item"><i class="ti ti-vs"></i> Comparative table: custom CNN vs AlexNet vs MobileNetV2 vs EfficientNet.</div><div class="task-item"><i class="ti ti-plus"></i> Explore 8-class Rh extension (if dataset allows).</div></div></div>
+        <div class="phase-card"><div class="phase-head"><div class="phase-bdg" style="background:#FBEAF0;color:#993556">Week 4</div><span class="phase-title">📄 Paper writing & arXiv submission</span><span class="phase-days">Days 24–30</span></div><div class="divider-light"></div><div class="tasks-list"><div class="task-item"><i class="ti ti-writing"></i> Write Methodology, Results, Discussion (emphasise gaps covered).</div><div class="task-item"><i class="ti ti-layout-2"></i> Use IEEE two‑column LaTeX template.</div><div class="task-item"><i class="ti ti-link"></i> Add citations: Acevedo, IEEE2022, Islam2024, Gavas2021, etc.</div><div class="task-item"><i class="ti ti-upload"></i> Upload preprint to arXiv (cs.CV / eess.IV).</div><div class="task-item"><i class="ti ti-adjustments"></i> Optional: create GitHub repo with code and preprocessed dataset.</div></div></div>
+        <div class="tip-note"><strong>💡 Research tip:</strong> Start writing from Week 1, document experimental results (including failed runs). The main novelty of your paper lies in <strong>explainability (Grad-CAM)</strong> + <strong>modern lightweight architecture comparison</strong> + addressing ABO-specific class imbalance. Target >96.7% accuracy.</div>
+      </div>
+    `;
+    }
+
+    const modal = document.getElementById('timelineModal');
+    const showBtn = document.getElementById('showTimelineBtnMain');
+    const closeBtn = document.getElementById('closeModalBtnMain');
+    const modalBodyDiv = document.getElementById('modalBodyTimeline');
+
+    function openModal() {
+      if (modalBodyDiv) modalBodyDiv.innerHTML = `<div class="timeline-embed">${buildTimelineHTML()}</div>`;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    showBtn?.addEventListener('click', openModal);
+    closeBtn?.addEventListener('click', closeModal);
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal?.classList.contains('active')) closeModal();
+    });
+  </script>
+</body>
+</html>

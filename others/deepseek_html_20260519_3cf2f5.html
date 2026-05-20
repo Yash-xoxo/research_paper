@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Research Hub · CNN Blood Group Classification</title>
+  <!-- Tabler Icons CDN (clean icons) -->
+  <link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ----- THEME VARIABLES (light/dark) ----- */
+    :root {
+      --bg-body: #f4f7fd;
+      --bg-card: #ffffff;
+      --bg-soft: #f8fafc;
+      --border-light: #e2edf2;
+      --text-main: #0b2b3b;
+      --text-muted: #2c5a6e;
+      --accent-primary: #2563eb;
+      --accent-hover: #1d4ed8;
+      --shadow-sm: 0 6px 14px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    body.dark {
+      --bg-body: #0d1117;
+      --bg-card: #161b22;
+      --bg-soft: #1c2128;
+      --border-light: #2d333b;
+      --text-main: #e6edf3;
+      --text-muted: #9cb3cc;
+      --accent-primary: #3b82f6;
+      --accent-hover: #60a5fa;
+    }
+
+    body {
+      background: var(--bg-body);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+      color: var(--text-main);
+      transition: background 0.2s, color 0.2s;
+      padding: 2rem 1.2rem;
+      line-height: 1.45;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    /* header + theme toggle */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-bottom: 2rem;
+    }
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-badge i {
+      font-size: 1.8rem;
+      color: var(--accent-primary);
+    }
+    .logo-badge h1 {
+      font-size: 1.55rem;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      background: linear-gradient(125deg, var(--text-main), var(--accent-primary));
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .theme-toggle {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 40px;
+      padding: 0.4rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: 0.2s;
+      backdrop-filter: blur(2px);
+    }
+    .theme-toggle:hover {
+      transform: scale(0.96);
+      border-color: var(--accent-primary);
+    }
+
+    /* main card (project overview) */
+    .overview-card {
+      background: var(--bg-card);
+      border-radius: 1.75rem;
+      border: 1px solid var(--border-light);
+      padding: 1.8rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s;
+    }
+    .overview-card:hover {
+      transform: translateY(-2px);
+    }
+    .chip {
+      display: inline-block;
+      background: var(--bg-soft);
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+      margin-bottom: 1rem;
+      border: 0.5px solid var(--border-light);
+    }
+    .overview-card h2 {
+      font-size: 1.7rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .desc {
+      color: var(--text-muted);
+      margin-bottom: 1.8rem;
+      line-height: 1.5;
+      border-left: 3px solid var(--accent-primary);
+      padding-left: 1rem;
+    }
+    .info-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.8rem;
+      margin: 1.5rem 0 1.2rem;
+    }
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      background: var(--bg-soft);
+      padding: 0.4rem 1rem;
+      border-radius: 60px;
+    }
+    .info-item i {
+      font-size: 1.2rem;
+      color: var(--accent-primary);
+    }
+
+    /* key research points (bullets) */
+    .research-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin: 1.5rem 0 1rem;
+    }
+    .feat {
+      background: var(--bg-soft);
+      border-radius: 30px;
+      padding: 0.3rem 1rem 0.3rem 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .feat i {
+      font-size: 1rem;
+      color: var(--accent-primary);
+    }
+
+    /* button to launch timeline (modal style - small inline but modern) */
+    .action-area {
+      display: flex;
+      justify-content: center;
+      margin: 2rem 0 2.2rem;
+    }
+    .timeline-btn {
+      background: var(--accent-primary);
+      border: none;
+      padding: 0.9rem 2rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 1rem;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .timeline-btn i {
+      font-size: 1.3rem;
+    }
+    .timeline-btn:hover {
+      background: var(--accent-hover);
+      transform: scale(0.97);
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.3);
+    }
+
+    /* MODAL (small embedded timeline) */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0.2s, opacity 0.2s ease;
+    }
+    .modal-overlay.active {
+      visibility: visible;
+      opacity: 1;
+    }
+    .modal-container {
+      background: var(--bg-card);
+      width: 90%;
+      max-width: 860px;
+      max-height: 85vh;
+      border-radius: 1.75rem;
+      box-shadow: 0 25px 40px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--border-light);
+      transition: transform 0.2s;
+      transform: scale(0.97);
+    }
+    .active .modal-container {
+      transform: scale(1);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border-light);
+      background: var(--bg-soft);
+    }
+    .modal-header h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.7rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      line-height: 1;
+      transition: 0.1s;
+    }
+    .close-modal:hover {
+      color: var(--accent-primary);
+    }
+    .modal-body {
+      padding: 0.6rem 0.2rem 0.2rem 0.2rem;
+      overflow-y: auto;
+      flex: 1;
+      background: var(--bg-body);
+    }
+    .timeline-embed {
+      width: 100%;
+      height: auto;
+    }
+
+    /* small footer note */
+    .footer-note {
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 2rem;
+      border-top: 1px solid var(--border-light);
+      padding-top: 1rem;
+    }
+    @media (max-width: 620px) {
+      .overview-card { padding: 1.2rem; }
+      .info-grid { gap: 0.8rem; }
+      .timeline-btn { padding: 0.7rem 1.4rem; font-size: 0.9rem; }
+      .modal-container { max-width: 95%; max-height: 90vh; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="top-bar">
+    <div class="logo-badge">
+      <i class="ti ti-microscope"></i>
+      <h1>HemoType<span style="font-weight:400"> Research</span></h1>
+    </div>
+    <div class="theme-toggle" id="themeToggleIndex">
+      <i class="ti ti-sun" id="themeIconIndex"></i>
+      <span id="themeLabelIndex">Light mode</span>
+    </div>
+  </div>
+
+  <!-- Main overview card -->
+  <div class="overview-card">
+    <div class="chip">📄 RESEARCH PROJECT BRIEF</div>
+    <h2>CNN-Based Blood Group Classification</h2>
+    <div class="desc">
+      Automated blood group detection from microscopic RBC images using deep learning.
+      A complete 30‑day blueprint from dataset collection to IEEE‑style publication.
+    </div>
+    <div class="info-grid">
+      <div class="info-item"><i class="ti ti-brand-python"></i> Python · Keras · OpenCV</div>
+      <div class="info-item"><i class="ti ti-chart-line"></i> Custom CNN + MobileNetV2</div>
+      <div class="info-item"><i class="ti ti-file-description"></i> 4 blood groups: A, B, AB, O</div>
+    </div>
+    <div class="research-features">
+      <span class="feat"><i class="ti ti-database"></i> Data augmentation</span>
+      <span class="feat"><i class="ti ti-eye"></i> Grad‑CAM explainability</span>
+      <span class="feat"><i class="ti ti-chart-bar"></i> Class imbalance handling</span>
+      <span class="feat"><i class="ti ti-writing"></i> IEEE two‑column template</span>
+      <span class="feat"><i class="ti ti-arrows-transfer-up"></i> Transfer learning</span>
+    </div>
+  </div>
+
+  <!-- Compact timeline preview (small description) -->
+  <div style="background: var(--bg-soft); border-radius: 1.25rem; padding: 1rem 1.3rem; margin-bottom: 1.2rem; border: 1px solid var(--border-light);">
+    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+      <i class="ti ti-calendar-time" style="font-size: 1.6rem; color: var(--accent-primary);"></i>
+      <div><strong style="font-size: 0.9rem;">📅 1‑month structured plan</strong><br>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">Week 1: Data & Literature → Week 2: Preprocessing → Week 3: Model → Week 4: Paper & Submission</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-area">
+    <button class="timeline-btn" id="showTimelineBtn">
+      <i class="ti ti-calendar-week"></i> View detailed research timeline
+    </button>
+  </div>
+
+  <div class="footer-note">
+    <i class="ti ti-brand-github"></i> Full reproducibility · 30‑day schedule · CNN blood group classification
+  </div>
+</div>
+
+<!-- MODAL (embed timeline) -->
+<div id="timelineModal" class="modal-overlay">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3><i class="ti ti-chart-infographic"></i> 1‑Month Research Plan</h3>
+      <button class="close-modal" id="closeModalBtn">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <!-- dynamic timeline content will be inserted here -->
+      <div style="padding: 1rem; text-align: center;">Loading timeline...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- THEME LOGIC (synchronized with index page) ----------
+  function setTheme(theme) {
+    const body = document.body;
+    const icon = document.getElementById('themeIconIndex');
+    const label = document.getElementById('themeLabelIndex');
+    if (theme === 'dark') {
+      body.classList.add('dark');
+      localStorage.setItem('bloodGroupThemeIndex', 'dark');
+      if (icon) icon.className = 'ti ti-moon';
+      if (label) label.innerText = 'Dark mode';
+    } else {
+      body.classList.remove('dark');
+      localStorage.setItem('bloodGroupThemeIndex', 'light');
+      if (icon) icon.className = 'ti ti-sun';
+      if (label) label.innerText = 'Light mode';
+    }
+  }
+  
+  const savedThemeIndex = localStorage.getItem('bloodGroupThemeIndex');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (savedThemeIndex === 'dark') setTheme('dark');
+  else if (savedThemeIndex === 'light') setTheme('light');
+  else if (prefersDark) setTheme('dark');
+  else setTheme('light');
+  
+  const toggleIndexBtn = document.getElementById('themeToggleIndex');
+  if (toggleIndexBtn) {
+    toggleIndexBtn.addEventListener('click', () => {
+      const isDark = document.body.classList.contains('dark');
+      setTheme(isDark ? 'light' : 'dark');
+    });
+  }
+  
+  // ---------- BUILD THE TIMELINE HTML (improved & compact but full content) ----------
+  function buildTimelineHTML() {
+    // This is the improved timeline from previous request, polished with dark/light support
+    // (same style and phases but encapsulated inside modal)
+    return `
+      <style>
+        .plan-wrap-modal { padding: 0.8rem 1rem 1.2rem 1rem; font-size: 13px; }
+        .phase-modal { border: 0.5px solid var(--border-light); background: var(--bg-card); border-radius: 1rem; margin-bottom: 12px; overflow: hidden; }
+        .phase-header-modal { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg-soft); border-bottom: 1px solid var(--border-light); flex-wrap: wrap; }
+        .phase-badge-modal { font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 30px; white-space: nowrap; }
+        .phase-title-modal { font-weight: 600; font-size: 13px; color: var(--text-main); }
+        .phase-days-modal { font-size: 10px; color: var(--text-muted); margin-left: auto; background: var(--bg-card); padding: 2px 8px; border-radius: 30px; }
+        .tasks-modal { padding: 10px 14px 12px; display: flex; flex-direction: column; gap: 8px; }
+        .task-modal { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+        .task-modal i { font-size: 14px; margin-top: 1px; flex-shrink: 0; color: var(--accent-primary); }
+        .divider-modal { height: 0.5px; background: var(--border-light); margin: 0 14px; }
+        .timeline-bar-modal { display: flex; gap: 3px; margin: 0 0 12px; height: 8px; border-radius: 8px; overflow: hidden; }
+        .legend-modal { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .leg-item-modal { display: flex; align-items: center; gap: 5px; font-size: 10px; background: var(--bg-soft); padding: 2px 10px; border-radius: 30px; }
+        .leg-dot-modal { width: 10px; height: 10px; border-radius: 2px; }
+        .tip-modal { font-size: 11px; background: var(--accent-info-bg); padding: 8px 12px; border-radius: 12px; border-left: 3px solid var(--accent-primary); margin-top: 8px; }
+        body.dark .tip-modal { background: #1e293b; }
+      </style>
+      <div class="plan-wrap-modal">
+        <div style="margin-bottom: 12px;">
+          <div class="timeline-bar-modal">
+            <div class="bar-seg" style="flex:5; background:#9FE1CB"></div>
+            <div class="bar-seg" style="flex:7; background:#B5D4F4"></div>
+            <div class="bar-seg" style="flex:8; background:#AFA9EC"></div>
+            <div class="bar-seg" style="flex:5; background:#FAC775"></div>
+            <div class="bar-seg" style="flex:5; background:#F4C0D1"></div>
+          </div>
+          <div class="legend-modal">
+            <div class="leg-item-modal"><div class="leg-dot-modal" style="background:#9FE1CB"></div>Week 1: Data</div>
+            <div class="leg-item-modal"><div class="leg-dot-modal" style="background:#B5D4F4"></div>Week 1–2: Preproc</div>
+            <div class="leg-item-modal"><div class="leg-dot-modal" style="background:#AFA9EC"></div>Week 2–3: Model</div>
+            <div class="leg-item-modal"><div class="leg-dot-modal" style="background:#FAC775"></div>Week 3–4: Optimize</div>
+            <div class="leg-item-modal"><div class="leg-dot-modal" style="background:#F4C0D1"></div>Week 4: Paper</div>
+          </div>
+        </div>
+        <!-- Phase 1 -->
+        <div class="phase-modal"><div class="phase-header-modal"><div class="phase-badge-modal" style="background:#E1F5EE;color:#0F6E56">Week 1</div><span class="phase-title-modal">Dataset & literature</span><span class="phase-days-modal">Days 1–5</span></div><div class="divider-modal"></div><div class="tasks-modal"><div class="task-modal"><i class="ti ti-database"></i>Download blood smear/blood group datasets from Kaggle</div><div class="task-modal"><i class="ti ti-files"></i>Read 5–8 related IEEE/Springer papers; note gaps</div><div class="task-modal"><i class="ti ti-folder"></i>Organize dataset into class folders (A, B, AB, O)</div><div class="task-modal"><i class="ti ti-chart-bar"></i>Check class balance; plan augmentation</div><div class="task-modal"><i class="ti ti-file-text"></i>Write Introduction + Literature Review draft (~30%)</div></div></div>
+        <!-- Phase 2 -->
+        <div class="phase-modal"><div class="phase-header-modal"><div class="phase-badge-modal" style="background:#E6F1FB;color:#185FA5">Week 1–2</div><span class="phase-title-modal">Preprocessing pipeline</span><span class="phase-days-modal">Days 4–10</span></div><div class="divider-modal"></div><div class="tasks-modal"><div class="task-modal"><i class="ti ti-crop"></i>Resize all images to 224×224 px</div><div class="task-modal"><i class="ti ti-adjustments"></i>Apply CLAHE / histogram equalization for contrast</div><div class="task-modal"><i class="ti ti-filter"></i>Gaussian blur for noise reduction (OpenCV)</div><div class="task-modal"><i class="ti ti-refresh"></i>Augmentation: rotation, flip, zoom, brightness</div><div class="task-modal"><i class="ti ti-layout-grid"></i>Split: 70% train / 15% val / 15% test</div></div></div>
+        <!-- Phase 3 -->
+        <div class="phase-modal"><div class="phase-header-modal"><div class="phase-badge-modal" style="background:#EEEDFE;color:#534AB7">Week 2–3</div><span class="phase-title-modal">Model training</span><span class="phase-days-modal">Days 8–18</span></div><div class="divider-modal"></div><div class="tasks-modal"><div class="task-modal"><i class="ti ti-brand-python"></i>Build lightweight custom CNN (3–4 conv layers) Keras</div><div class="task-modal"><i class="ti ti-arrows-transfer-up"></i>Try transfer learning: MobileNetV2 (frozen base)</div><div class="task-modal"><i class="ti ti-player-play"></i>Train for 30–50 epochs; early stopping</div><div class="task-modal"><i class="ti ti-chart-line"></i>Plot accuracy & loss curves; save best model</div><div class="task-modal"><i class="ti ti-table"></i>Generate confusion matrix + classification report</div></div></div>
+        <!-- Phase 4 -->
+        <div class="phase-modal"><div class="phase-header-modal"><div class="phase-badge-modal" style="background:#FAEEDA;color:#854F0B">Week 3–4</div><span class="phase-title-modal">Optimization & evaluation</span><span class="phase-days-modal">Days 18–24</span></div><div class="divider-modal"></div><div class="tasks-modal"><div class="task-modal"><i class="ti ti-settings"></i>Tune: learning rate, dropout, batch size</div><div class="task-modal"><i class="ti ti-eye"></i>Add Grad-CAM visualization (explainability angle)</div><div class="task-modal"><i class="ti ti-percentage"></i>Report: accuracy, precision, recall, F1, AUC-ROC</div><div class="task-modal"><i class="ti ti-vs"></i>Compare custom CNN vs MobileNetV2 in table</div></div></div>
+        <!-- Phase 5 -->
+        <div class="phase-modal"><div class="phase-header-modal"><div class="phase-badge-modal" style="background:#FBEAF0;color:#993556">Week 4</div><span class="phase-title-modal">Paper writing & submission</span><span class="phase-days-modal">Days 24–30</span></div><div class="divider-modal"></div><div class="tasks-modal"><div class="task-modal"><i class="ti ti-writing"></i>Write Methodology, Results, Discussion sections</div><div class="task-modal"><i class="ti ti-layout-2"></i>Use IEEE two-column template (LaTeX or Word)</div><div class="task-modal"><i class="ti ti-link"></i>Add citations in IEEE format (10–20 references)</div><div class="task-modal"><i class="ti ti-upload"></i>Upload to arXiv (cs.CV or eess.IV category)</div></div></div>
+        <div class="tip-modal"><strong>Key tip:</strong> Start paper writing in Week 1 alongside dataset work — document experiments as you go. Saves massive time.</div>
+      </div>
+    `;
+  }
+  
+  // MODAL functionality
+  const modal = document.getElementById('timelineModal');
+  const showBtn = document.getElementById('showTimelineBtn');
+  const closeBtn = document.getElementById('closeModalBtn');
+  const modalBodyDiv = document.getElementById('modalBody');
+  
+  function openModal() {
+    if (modalBodyDiv) {
+      modalBodyDiv.innerHTML = `<div class="timeline-embed">${buildTimelineHTML()}</div>`;
+      // after injection, also update any dynamic theme class references inside modal? they'll inherit from body.
+      // Apply minor fix: ensure inline icons stay visible (they use same CSS vars)
+    }
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  
+  function closeModal() {
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  
+  if (showBtn) showBtn.addEventListener('click', openModal);
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+  // keyboard escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
+  });
+  
+  // optional: preload timeline content to make it snappy? we'll load on first open
+  // but also if modal opens later it'll load. ensures fresh theme var rendering
+  // Also if the theme changes while modal open, re-render maybe? not needed because CSS vars auto-update inside modal.
+  // For perfect consistency, we can rebuild on theme toggle if needed but it's fine since colors adapt via body.dark.
+</script>
+</body>
+</html>

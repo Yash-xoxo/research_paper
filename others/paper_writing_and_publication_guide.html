@@ -1,0 +1,260 @@
+
+<style>
+  body{margin:0;padding:0}
+  .wrap{padding:1rem 0;font-size:13px}
+  .sec-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:14px;overflow:hidden}
+  .sec-header{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:0.5px solid var(--color-border-tertiary)}
+  .sec-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0}
+  .sec-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+  .sec-meta{margin-left:auto;font-size:11px;color:var(--color-text-secondary);white-space:nowrap}
+  .sec-body{padding:12px 14px;display:flex;flex-direction:column;gap:7px}
+  .row{display:flex;gap:8px;align-items:flex-start}
+  .label{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;white-space:nowrap;margin-top:1px}
+  .content{font-size:13px;color:var(--color-text-secondary);line-height:1.5}
+  .content b{font-weight:500;color:var(--color-text-primary)}
+  .divider{height:0.5px;background:var(--color-border-tertiary);margin:4px 0}
+  .tip{font-size:12px;color:var(--color-text-secondary);padding:7px 10px;background:var(--color-background-secondary);border-left:3px solid var(--color-border-info);border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;margin-top:4px}
+  .pub-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+  .pub-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;border:0.5px solid var(--color-border-tertiary)}
+  .pub-tier{font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:5px}
+  .pub-name{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+  .pub-detail{font-size:11px;color:var(--color-text-secondary);line-height:1.5}
+  .star{color:#EF9F27}
+</style>
+<div class="wrap">
+  <p style="font-size:15px;font-weight:500;color:var(--color-text-primary);margin:0 0 4px">Your complete paper writing guide</p>
+  <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 16px">Every section — exactly what to write, how long, what to include</p>
+
+  <!-- Section 1: Title & Abstract -->
+  <div class="sec-card">
+    <div class="sec-header">
+      <div class="sec-num" style="background:#EEEDFE;color:#534AB7">1</div>
+      <span class="sec-title">Title + Abstract</span>
+      <span class="sec-meta">~250 words · Write last</span>
+    </div>
+    <div class="sec-body">
+      <div class="row">
+        <span class="label" style="background:#EEEDFE;color:#534AB7">Title</span>
+        <div class="content"><b>Use:</b> "CNN-Based ABO Blood Group Classification from Microscopic Blood Images with Explainable AI" — contains: method (CNN), task (ABO classification), data (microscopic images), novelty (XAI)</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#EEEDFE;color:#534AB7">Abstract</span>
+        <div class="content">5 sentences exactly: <b>(1)</b> Why blood typing matters. <b>(2)</b> Gap — current methods are manual/slow/unexplainable. <b>(3)</b> What you did — CNN + MobileNetV2 + Grad-CAM. <b>(4)</b> Your result — "achieved X% accuracy on [dataset]." <b>(5)</b> Significance — faster, explainable, AI-assisted.</div>
+      </div>
+      <div class="tip">Write this last — only when you have real results. Never fabricate numbers.</div>
+    </div>
+  </div>
+
+  <!-- Section 2: Introduction -->
+  <div class="sec-card">
+    <div class="sec-header">
+      <div class="sec-num" style="background:#E1F5EE;color:#0F6E56">2</div>
+      <span class="sec-title">Introduction</span>
+      <span class="sec-meta">~500 words · Write in Week 1</span>
+    </div>
+    <div class="sec-body">
+      <div class="row">
+        <span class="label" style="background:#E1F5EE;color:#0F6E56">Para 1</span>
+        <div class="content"><b>Hook:</b> Blood typing is critical for transfusions, transplants, emergency care. Over 100 million blood transfusions happen yearly. Manual testing is slow, error-prone, requires reagents.</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#E1F5EE;color:#0F6E56">Para 2</span>
+        <div class="content"><b>AI motivation:</b> Deep learning has transformed medical imaging — cancer, malaria, COVID detection. Blood cell analysis is a growing field. But ABO classification from images is underexplored.</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#E1F5EE;color:#0F6E56">Para 3</span>
+        <div class="content"><b>Gap statement:</b> "Existing CNN-based blood group work (IEEE 2022) achieved 96.7% but compared only against outdated architectures (AlexNet, LeNet5) and provided no explainability." — THIS is your gap.</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#E1F5EE;color:#0F6E56">Para 4</span>
+        <div class="content"><b>Your contribution:</b> List 3 bullet points — (1) modern lightweight CNN, (2) comparison with MobileNetV2/EfficientNet, (3) Grad-CAM explainability for clinical trust.</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#E1F5EE;color:#0F6E56">Para 5</span>
+        <div class="content"><b>Paper structure:</b> "The rest of this paper is organized as follows: Section II reviews…" — one sentence each section.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Literature Review -->
+  <div class="sec-card">
+    <div class="sec-header">
+      <div class="sec-num" style="background:#E6F1FB;color:#185FA5">3</div>
+      <span class="sec-title">Literature Review / Related Work</span>
+      <span class="sec-meta">~600 words · Write in Week 1</span>
+    </div>
+    <div class="sec-body">
+      <div class="row">
+        <span class="label" style="background:#E6F1FB;color:#185FA5">Group A</span>
+        <div class="content"><b>Blood cell classification (3–4 papers):</b> Acevedo et al. 2020 (PBC dataset), Gavas & Olpadkar 2021 (27 CNNs, 99.51%), Islam et al. 2024 (XAI + 99.12%). Show state of the art.</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#E6F1FB;color:#185FA5">Group B</span>
+        <div class="content"><b>Blood GROUP detection (3–4 papers):</b> IEEE 2022 ABO paper (96.7%), IJCTT 2025 (K-means + SVM), IJSCI 2025 (agglutination images). Show what's been tried for ABO specifically.</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#E6F1FB;color:#185FA5">Group C</span>
+        <div class="content"><b>Explainable AI in medical imaging (2 papers):</b> Islam et al. 2024 Grad-CAM++, CMES 2025 lightweight XAI. Then say: "However, none of these XAI studies targeted ABO blood group classification."</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#E6F1FB;color:#185FA5">End para</span>
+        <div class="content"><b>Conclude the gap:</b> "To the best of our knowledge, no prior work has combined lightweight CNN architectures with XAI techniques specifically for ABO blood group classification, which this paper addresses."</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Dataset -->
+  <div class="sec-card">
+    <div class="sec-header">
+      <div class="sec-num" style="background:#FAEEDA;color:#854F0B">4</div>
+      <span class="sec-title">Dataset Description</span>
+      <span class="sec-meta">~300 words · Write in Week 1–2</span>
+    </div>
+    <div class="sec-body">
+      <div class="row">
+        <span class="label" style="background:#FAEEDA;color:#854F0B">Content</span>
+        <div class="content">Name + source of dataset used. Total images. Class distribution (A, B, AB, O — count per class). Image resolution. Train/validation/test split ratios (70/15/15). Where you downloaded it from.</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#FAEEDA;color:#854F0B">Table</span>
+        <div class="content">Add a small table: Class | No. of images | % of total. This shows you understand your data distribution.</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#FAEEDA;color:#854F0B">If custom</span>
+        <div class="content">If you build your own dataset: describe collection process, microscope settings, how labels were assigned, ethical approval if applicable. This becomes an extra research contribution.</div>
+      </div>
+      <div class="tip">If using Barcelona PBC dataset, note it doesn't have ABO labels but is used to evaluate morphology classification pipeline, and frame accordingly.</div>
+    </div>
+  </div>
+
+  <!-- Section 5: Methodology -->
+  <div class="sec-card">
+    <div class="sec-header">
+      <div class="sec-num" style="background:#FAECE7;color:#993C1D">5</div>
+      <span class="sec-title">Proposed Methodology</span>
+      <span class="sec-meta">~700 words · Write in Week 2–3 (the core section)</span>
+    </div>
+    <div class="sec-body">
+      <div class="row">
+        <span class="label" style="background:#FAECE7;color:#993C1D">5A</span>
+        <div class="content"><b>Preprocessing:</b> Resize to 224×224. CLAHE contrast enhancement. Gaussian blur (kernel 3×3). Normalization [0,1]. Justify each step — don't just list, explain why.</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#FAECE7;color:#993C1D">5B</span>
+        <div class="content"><b>Augmentation:</b> Rotation (±20°), horizontal flip, zoom (0.9–1.1×), brightness shift (±15%). State you used ImageDataGenerator (Keras) and the augmentation was applied only on training set.</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#FAECE7;color:#993C1D">5C</span>
+        <div class="content"><b>CNN architecture:</b> Describe layer by layer — Conv2D → MaxPool → BatchNorm → Dropout → Dense → Softmax. Include a table with layer names, filter sizes, output shapes. Draw a diagram.</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#FAECE7;color:#993C1D">5D</span>
+        <div class="content"><b>Transfer learning:</b> Describe MobileNetV2 base (frozen ImageNet weights), added Dense layers, fine-tuning strategy (unfreeze last N layers). Compare with your custom CNN.</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#FAECE7;color:#993C1D">5E</span>
+        <div class="content"><b>Training setup:</b> Optimizer (Adam, lr=0.001), loss (categorical crossentropy), batch size (32), epochs (50), early stopping (patience=5), ModelCheckpoint (save best val_acc).</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#FAECE7;color:#993C1D">5F</span>
+        <div class="content"><b>Grad-CAM:</b> Explain what it is (1 sentence), which layer you apply it to (last conv layer), show 2–3 example heatmap images. This is your novelty — describe it clearly.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: Results -->
+  <div class="sec-card">
+    <div class="sec-header">
+      <div class="sec-num" style="background:#EAF3DE;color:#3B6D11">6</div>
+      <span class="sec-title">Experimental Results</span>
+      <span class="sec-meta">~500 words · Write in Week 3</span>
+    </div>
+    <div class="sec-body">
+      <div class="row">
+        <span class="label" style="background:#EAF3DE;color:#3B6D11">Metrics</span>
+        <div class="content">Report for each model: <b>Accuracy, Precision, Recall, F1-score, AUC-ROC</b> — per class AND overall. Use a results table. This is mandatory for publication.</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#EAF3DE;color:#3B6D11">Figures</span>
+        <div class="content"><b>(1)</b> Training/validation accuracy curve. <b>(2)</b> Training/validation loss curve. <b>(3)</b> Confusion matrix (4×4 for A/B/AB/O). <b>(4)</b> Grad-CAM heatmap examples. These 4 figures are required.</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#EAF3DE;color:#3B6D11">Comparison</span>
+        <div class="content">Table comparing: Your CNN vs MobileNetV2 vs AlexNet vs LeNet5 (from IEEE 2022). Show you beat the 96.7% benchmark — or honestly explain why you didn't and what you would improve.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 7: Discussion -->
+  <div class="sec-card">
+    <div class="sec-header">
+      <div class="sec-num" style="background:#FBEAF0;color:#993556">7</div>
+      <span class="sec-title">Discussion</span>
+      <span class="sec-meta">~400 words · Write in Week 4</span>
+    </div>
+    <div class="sec-body">
+      <div class="row">
+        <span class="label" style="background:#FBEAF0;color:#993556">Content</span>
+        <div class="content">Interpret your results — not just state them. <b>Why</b> did MobileNetV2 perform better/worse than custom CNN? What do the Grad-CAM maps reveal? Which class (A/B/AB/O) was hardest to classify and why? What does that tell us about the biology?</div>
+      </div>
+      <div class="row">
+        <span class="label" style="background:#FBEAF0;color:#993556">Limitations</span>
+        <div class="content">Be honest: small dataset, no Rh factor, single population data, not clinically validated. Showing you know the limits is a sign of good research, not weakness.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 8: Conclusion -->
+  <div class="sec-card">
+    <div class="sec-header">
+      <div class="sec-num" style="background:#F1EFE8;color:#444441">8</div>
+      <span class="sec-title">Conclusion + Future Work</span>
+      <span class="sec-meta">~250 words · Write in Week 4</span>
+    </div>
+    <div class="sec-body">
+      <div class="row">
+        <span class="label" style="background:#F1EFE8;color:#444441">Content</span>
+        <div class="content">Summarize what you did and what accuracy you got. Then 3 future work points: (1) extend to Rh+ /Rh− (8 classes), (2) build larger labeled dataset, (3) deploy as mobile/edge application for resource-limited settings.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Publication Section -->
+  <p style="font-size:15px;font-weight:500;color:var(--color-text-primary);margin:20px 0 8px">Where to publish — by difficulty</p>
+  <div class="pub-grid">
+    <div class="pub-card">
+      <div class="pub-tier" style="background:#E1F5EE;color:#0F6E56">★ Easiest — Start here</div>
+      <div class="pub-name">arXiv preprint</div>
+      <div class="pub-detail">Free. Upload PDF. Live in 24–48hrs. Gets you a DOI and citation-ready link. Submit to <b>cs.CV</b> or <b>eess.IV</b> category. Not peer-reviewed but builds credibility immediately.<br><br>🔗 arxiv.org/submit</div>
+    </div>
+    <div class="pub-card">
+      <div class="pub-tier" style="background:#E6F1FB;color:#185FA5">★★ Fast journal (2–6 weeks)</div>
+      <div class="pub-name">MDPI Applied Sciences</div>
+      <div class="pub-detail">Scopus + Web of Science indexed. Open access. Fast peer review (2–6 weeks). APC fee ~CHF 2400 — check for waiver. Has published many similar CNN medical imaging papers.<br><br>🔗 mdpi.com/journal/applsci</div>
+    </div>
+    <div class="pub-card">
+      <div class="pub-tier" style="background:#E6F1FB;color:#185FA5">★★ Fast journal (4–6 weeks)</div>
+      <div class="pub-name">IEEE Access</div>
+      <div class="pub-detail">IEEE-branded, fully open access, Scopus indexed. APC ~$1,995 USD. Accepts applied deep learning medical imaging papers. Peer review 4–6 weeks average.<br><br>🔗 ieeeaccess.ieee.org</div>
+    </div>
+    <div class="pub-card">
+      <div class="pub-tier" style="background:#FAEEDA;color:#854F0B">★★★ Conference (stronger)</div>
+      <div class="pub-name">IEEE ICIP / EMBC</div>
+      <div class="pub-detail">ICIP (Image Processing) or EMBC (Engineering in Medicine & Biology). 4–6 page paper. Peer reviewed. Published on IEEE Xplore. Check 2026 deadlines — typically Jan–March submission.<br><br>🔗 ieeexplore.ieee.org</div>
+    </div>
+    <div class="pub-card">
+      <div class="pub-tier" style="background:#FAECE7;color:#993C1D">★★★ Scopus fast AI journal</div>
+      <div class="pub-name">Frontiers in AI / Bioeng.</div>
+      <div class="pub-detail">Frontiers in Artificial Intelligence or Frontiers in Bioengineering & Biotechnology. Open access, Scopus indexed. Review 4–8 weeks. APC ~€1,390–€2,150. Good fit for XAI medical papers.</div>
+    </div>
+    <div class="pub-card">
+      <div class="pub-tier" style="background:#EEEDFE;color:#534AB7">★★★★ Prestigious (slower)</div>
+      <div class="pub-name">Computers in Biology & Medicine</div>
+      <div class="pub-detail">Elsevier, high-impact. IF ~7. Requires strong dataset + solid methodology. Review 3–6 months. Free to submit (non-OA). Best if you have a novel dataset. Target after arXiv/conference.</div>
+    </div>
+  </div>
+
+  <div style="margin-top:16px;padding:10px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);font-size:12px;color:var(--color-text-secondary)">
+    <b style="color:var(--color-text-primary)">Recommended path for 1 month:</b> Finish paper → upload to arXiv (Day 28) → simultaneously submit to MDPI Applied Sciences or IEEE Access. You get a public preprint immediately while peer review runs in parallel (takes 4–6 weeks). Best of both worlds.
+  </div>
+</div>

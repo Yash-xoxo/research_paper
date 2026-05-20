@@ -1,481 +1,658 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Research Hub · CNN ABO Blood Group Classification</title>
-  <link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CNN-Based ABO Blood Group Classification — Research Presentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg-primary:#0B1120;
+    --bg-secondary:#111827;
+    --bg-card:#151F32;
+    --bg-card-hover:#1A2540;
+    --accent:#00C2D1;
+    --accent-glow:rgba(0,194,209,0.15);
+    --accent-bright:#00E5FF;
+    --text-primary:#F1F5F9;
+    --text-secondary:#94A3B8;
+    --text-tertiary:#64748B;
+    --border:rgba(148,163,184,0.1);
+    --border-accent:rgba(0,194,209,0.3);
+    --gradient-accent:linear-gradient(135deg,#00C2D1,#0088FF);
+    --gradient-hero:linear-gradient(135deg,#0B1120 0%,#0F1A2E 40%,#0D1F3C 100%);
+  }
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    background:var(--bg-primary);
+    color:var(--text-primary);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  /* ===== NAVIGATION ===== */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    padding:0 24px;height:64px;
+    display:flex;align-items:center;justify-content:space-between;
+    background:rgba(11,17,32,0.85);
+    backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-logo{font-size:15px;font-weight:600;color:var(--accent);letter-spacing:-0.02em}
+  .nav-logo span{color:var(--text-primary);font-weight:400}
+  .nav-links{display:flex;gap:24px}
+  .nav-links a{font-size:13px;color:var(--text-secondary);text-decoration:none;transition:color 0.2s}
+  .nav-links a:hover{color:var(--accent)}
+  @media(max-width:768px){.nav-links{display:none}}
 
-    /* THEME VARIABLES */
-    :root {
-      --bg-body: #f4f7fd;
-      --bg-card: #ffffff;
-      --bg-soft: #f8fafc;
-      --border-light: #e2edf2;
-      --text-main: #0b2b3b;
-      --text-muted: #2c5a6e;
-      --accent-primary: #2563eb;
-      --accent-hover: #1d4ed8;
-      --shadow-sm: 0 6px 14px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.05);
-      --table-header: #eef2ff;
-    }
-    body.dark {
-      --bg-body: #0d1117;
-      --bg-card: #161b22;
-      --bg-soft: #1c2128;
-      --border-light: #2d333b;
-      --text-main: #e6edf3;
-      --text-muted: #9cb3cc;
-      --accent-primary: #3b82f6;
-      --accent-hover: #60a5fa;
-      --table-header: #1e293b;
-    }
+  /* ===== HERO ===== */
+  .hero{
+    min-height:100vh;
+    background:var(--gradient-hero);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:100px 24px 60px;text-align:center;position:relative;
+  }
+  .hero::before{
+    content:'';position:absolute;top:20%;left:50%;transform:translate(-50%,-50%);
+    width:600px;height:600px;
+    background:radial-gradient(circle,rgba(0,194,209,0.08) 0%,transparent 70%);
+    pointer-events:none;
+  }
+  .hero-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:6px 16px;border-radius:100px;
+    background:var(--accent-glow);
+    border:1px solid var(--border-accent);
+    font-size:12px;font-weight:500;color:var(--accent);
+    margin-bottom:28px;
+    animation:fadeSlideIn 0.8s ease-out both;
+  }
+  .hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse-dot 2s infinite}
+  .hero h1{
+    font-size:clamp(28px,5vw,52px);font-weight:700;letter-spacing:-0.03em;
+    line-height:1.1;max-width:800px;
+    animation:fadeSlideIn 0.8s 0.1s ease-out both;
+  }
+  .hero h1 .accent{background:var(--gradient-accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .hero-meta{
+    margin-top:20px;font-size:15px;color:var(--text-secondary);
+    animation:fadeSlideIn 0.8s 0.2s ease-out both;
+  }
+  .hero-meta span{margin:0 8px;color:var(--text-tertiary)}
+  .hero-buttons{
+    display:flex;gap:12px;margin-top:36px;flex-wrap:wrap;justify-content:center;
+    animation:fadeSlideIn 0.8s 0.3s ease-out both;
+  }
+  .btn-primary{
+    padding:12px 28px;border-radius:12px;font-size:14px;font-weight:500;
+    background:var(--gradient-accent);color:#fff;border:none;cursor:pointer;
+    transition:transform 0.2s,box-shadow 0.2s;text-decoration:none;
+  }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,194,209,0.3)}
+  .btn-secondary{
+    padding:12px 28px;border-radius:12px;font-size:14px;font-weight:500;
+    background:transparent;color:var(--text-primary);cursor:pointer;
+    border:1px solid var(--border);transition:all 0.2s;text-decoration:none;
+  }
+  .btn-secondary:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+  .hero-tags{
+    display:flex;gap:8px;margin-top:40px;flex-wrap:wrap;justify-content:center;
+    animation:fadeSlideIn 0.8s 0.4s ease-out both;
+  }
+  .hero-tag{
+    padding:6px 14px;border-radius:8px;font-size:12px;font-weight:500;
+    background:var(--bg-card);border:1px solid var(--border);
+    color:var(--text-secondary);transition:all 0.3s;
+  }
+  .hero-tag:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+  .hero-tag.active{animation:tag-glow 3s infinite}
+  @keyframes tag-glow{0%,100%{box-shadow:0 0 0 rgba(0,194,209,0)}50%{box-shadow:0 0 12px rgba(0,194,209,0.2)}}
 
-    body {
-      background: var(--bg-body);
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
-      color: var(--text-main);
-      transition: background 0.2s, color 0.2s;
-      padding: 2rem 1.2rem;
-      line-height: 1.45;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+  /* ===== SECTIONS ===== */
+  section{padding:80px 24px;max-width:1120px;margin:0 auto}
+  .section-label{
+    font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:8px;
+  }
+  .section-title{
+    font-size:clamp(24px,3.5vw,36px);font-weight:700;letter-spacing:-0.02em;
+    margin-bottom:12px;
+  }
+  .section-desc{font-size:16px;color:var(--text-secondary);max-width:640px;margin-bottom:48px}
 
-    /* header */
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.8rem;
-      margin-bottom: 2rem;
-    }
-    .logo-badge {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .logo-badge i {
-      font-size: 1.8rem;
-      color: var(--accent-primary);
-    }
-    .logo-badge h1 {
-      font-size: 1.55rem;
-      font-weight: 600;
-      letter-spacing: -0.3px;
-      background: linear-gradient(125deg, var(--text-main), var(--accent-primary));
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-    }
-    .theme-toggle {
-      background: var(--bg-card);
-      border: 1px solid var(--border-light);
-      border-radius: 40px;
-      padding: 0.4rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--text-muted);
-      transition: 0.2s;
-    }
-    .theme-toggle:hover {
-      transform: scale(0.96);
-      border-color: var(--accent-primary);
-    }
+  /* ===== PROBLEM CARDS ===== */
+  .problem-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+  .problem-card{
+    padding:32px 28px;border-radius:16px;
+    background:var(--bg-card);border:1px solid var(--border);
+    transition:all 0.3s;position:relative;overflow:hidden;
+  }
+  .problem-card:hover{border-color:var(--border-accent);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.3)}
+  .problem-card .icon{
+    width:52px;height:52px;border-radius:14px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:24px;margin-bottom:20px;
+  }
+  .problem-card .icon.red{background:rgba(239,68,68,0.1);color:#EF4444}
+  .problem-card .icon.amber{background:rgba(245,158,11,0.1);color:#F59E0B}
+  .problem-card .icon.purple{background:rgba(168,85,247,0.1);color:#A855F7}
+  .problem-card h3{font-size:20px;font-weight:600;margin-bottom:8px;letter-spacing:-0.01em}
+  .problem-card p{font-size:14px;color:var(--text-secondary);line-height:1.6}
+  .problem-card .big-num{font-size:36px;font-weight:700;background:var(--gradient-accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
 
-    /* cards */
-    .card {
-      background: var(--bg-card);
-      border-radius: 1.5rem;
-      border: 1px solid var(--border-light);
-      padding: 1.5rem 1.8rem;
-      margin-bottom: 1.8rem;
-      box-shadow: var(--shadow-sm);
-      transition: transform 0.1s ease;
-    }
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 1rem;
-      border-left: 4px solid var(--accent-primary);
-      padding-left: 0.8rem;
-    }
-    .card-header i {
-      font-size: 1.5rem;
-      color: var(--accent-primary);
-    }
-    .card-header h2 {
-      font-size: 1.35rem;
-      font-weight: 600;
-    }
-    .badge {
-      display: inline-block;
-      background: var(--bg-soft);
-      padding: 0.2rem 0.8rem;
-      border-radius: 30px;
-      font-size: 0.7rem;
-      font-weight: 500;
-      color: var(--accent-primary);
-      margin-bottom: 0.8rem;
-    }
-    .dataset-grid, .gap-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin: 1rem 0;
-    }
-    .dataset-item {
-      background: var(--bg-soft);
-      border-radius: 1rem;
-      padding: 0.8rem 1rem;
-      flex: 1 1 240px;
-      border: 1px solid var(--border-light);
-    }
-    .dataset-item strong {
-      color: var(--accent-primary);
-    }
-    .gap-item {
-      background: var(--bg-soft);
-      border-radius: 1rem;
-      padding: 0.7rem 1rem;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-      width: 100%;
-    }
-    .gap-item i {
-      margin-top: 2px;
-      color: var(--accent-primary);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.8rem;
-      margin: 1rem 0;
-    }
-    th, td {
-      border: 1px solid var(--border-light);
-      padding: 0.6rem 0.8rem;
-      text-align: left;
-    }
-    th {
-      background: var(--table-header);
-      font-weight: 600;
-    }
-    .positioning {
-      background: var(--bg-soft);
-      border-left: 4px solid var(--accent-primary);
-      padding: 1rem;
-      border-radius: 1rem;
-      font-style: italic;
-      margin: 1rem 0;
-    }
-    .btn-timeline {
-      background: var(--accent-primary);
-      border: none;
-      padding: 0.8rem 1.8rem;
-      border-radius: 60px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: white;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      transition: 0.2s;
-      margin: 0.5rem 0;
-    }
-    .btn-timeline:hover {
-      background: var(--accent-hover);
-      transform: scale(0.97);
-    }
-    /* modal */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(6px);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      visibility: hidden;
-      opacity: 0;
-      transition: 0.2s;
-    }
-    .modal-overlay.active {
-      visibility: visible;
-      opacity: 1;
-    }
-    .modal-container {
-      background: var(--bg-card);
-      width: 90%;
-      max-width: 880px;
-      max-height: 85vh;
-      border-radius: 1.75rem;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      border: 1px solid var(--border-light);
-    }
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      padding: 1rem 1.5rem;
-      background: var(--bg-soft);
-      border-bottom: 1px solid var(--border-light);
-    }
-    .modal-body {
-      overflow-y: auto;
-      padding: 0.2rem;
-    }
-    .close-modal {
-      background: none;
-      border: none;
-      font-size: 1.7rem;
-      cursor: pointer;
-      color: var(--text-muted);
-    }
-    hr {
-      border-color: var(--border-light);
-      margin: 0.5rem 0;
-    }
-    @media (max-width: 700px) {
-      .card { padding: 1.2rem; }
-    }
-  </style>
+  /* ===== PIPELINE ===== */
+  .pipeline-wrapper{overflow-x:auto;padding-bottom:16px}
+  .pipeline{
+    display:flex;align-items:center;gap:0;min-width:800px;
+    justify-content:center;flex-wrap:nowrap;
+  }
+  .pipeline-step{
+    padding:16px 20px;border-radius:12px;
+    background:var(--bg-card);border:1px solid var(--border);
+    text-align:center;min-width:120px;cursor:pointer;
+    transition:all 0.3s;position:relative;
+  }
+  .pipeline-step:hover,.pipeline-step.active{border-color:var(--accent);box-shadow:0 0 20px var(--accent-glow)}
+  .pipeline-step .step-icon{font-size:22px;margin-bottom:6px}
+  .pipeline-step .step-label{font-size:12px;font-weight:600;color:var(--text-primary)}
+  .pipeline-step .step-sub{font-size:10px;color:var(--text-tertiary);margin-top:2px}
+  .pipeline-arrow{font-size:20px;color:var(--text-tertiary);margin:0 6px;flex-shrink:0}
+  .pipeline-desc{
+    margin-top:20px;padding:20px 24px;border-radius:12px;
+    background:var(--bg-card);border:1px solid var(--border-accent);
+    font-size:14px;color:var(--text-secondary);line-height:1.7;
+    min-height:60px;transition:opacity 0.3s;
+  }
+  .pipeline-desc .desc-title{font-size:14px;font-weight:600;color:var(--accent);margin-bottom:6px}
+
+  /* ===== ABSTRACT ===== */
+  .abstract-card{
+    padding:36px;border-radius:16px;
+    background:var(--bg-card);border:1px solid var(--border);
+    position:relative;
+  }
+  .abstract-card::before{
+    content:'';position:absolute;top:0;left:24px;right:24px;height:3px;
+    background:var(--gradient-accent);border-radius:0 0 4px 4px;
+  }
+  .abstract-text{font-size:15px;color:var(--text-secondary);line-height:1.8}
+  .copy-btn{
+    margin-top:20px;padding:8px 20px;border-radius:8px;font-size:13px;font-weight:500;
+    background:var(--bg-secondary);border:1px solid var(--border);
+    color:var(--text-secondary);cursor:pointer;transition:all 0.2s;
+  }
+  .copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .copy-btn.copied{border-color:#22C55E;color:#22C55E}
+
+  /* ===== RESULTS ===== */
+  .metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:40px}
+  .metric-card{
+    padding:24px;border-radius:12px;text-align:center;
+    background:var(--bg-card);border:1px solid var(--border);
+    transition:all 0.3s;
+  }
+  .metric-card:hover{border-color:var(--border-accent);transform:translateY(-2px)}
+  .metric-card .metric-value{font-size:36px;font-weight:700;background:var(--gradient-accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .metric-card .metric-label{font-size:13px;color:var(--text-secondary);margin-top:4px;font-weight:500}
+  .confusion-matrix-wrapper{display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap}
+  .confusion-section h4{font-size:16px;font-weight:600;margin-bottom:16px}
+  .cm-grid{display:grid;grid-template-columns:60px repeat(4,1fr);gap:3px;max-width:400px}
+  .cm-header{font-size:11px;font-weight:600;color:var(--accent);text-align:center;padding:8px 4px}
+  .cm-label{font-size:11px;font-weight:600;color:var(--accent);display:flex;align-items:center;justify-content:center}
+  .cm-cell{
+    padding:14px 8px;text-align:center;border-radius:6px;font-size:13px;font-weight:500;
+    transition:transform 0.2s;cursor:default;
+  }
+  .cm-cell:hover{transform:scale(1.05)}
+  .cm-note{font-size:13px;color:var(--text-tertiary);margin-top:16px;font-style:italic}
+
+  /* ===== DATASET ===== */
+  .dataset-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+  .dataset-card{
+    padding:28px;border-radius:16px;
+    background:var(--bg-card);border:1px solid var(--border);
+    transition:all 0.3s;
+  }
+  .dataset-card:hover{border-color:var(--border-accent);transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.3)}
+  .dataset-card .ds-badge{
+    display:inline-block;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;
+    background:var(--accent-glow);color:var(--accent);margin-bottom:14px;
+  }
+  .dataset-card h3{font-size:18px;font-weight:600;margin-bottom:8px}
+  .dataset-card p{font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:16px}
+  .dataset-card .ds-link{
+    font-size:13px;font-weight:500;color:var(--accent);text-decoration:none;
+    display:inline-flex;align-items:center;gap:4px;transition:gap 0.2s;
+  }
+  .dataset-card .ds-link:hover{gap:8px}
+
+  /* ===== TECH STACK ===== */
+  .tech-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+  .tech-item{
+    padding:20px 16px;border-radius:12px;text-align:center;
+    background:var(--bg-card);border:1px solid var(--border);
+    transition:all 0.3s;
+  }
+  .tech-item:hover{border-color:var(--border-accent);transform:translateY(-2px)}
+  .tech-item .tech-icon{font-size:28px;margin-bottom:8px}
+  .tech-item .tech-name{font-size:13px;font-weight:500;color:var(--text-secondary)}
+
+  /* ===== TIMELINE ===== */
+  .timeline{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin-top:32px}
+  .timeline-step{
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    position:relative;cursor:default;
+  }
+  .timeline-dot{
+    width:40px;height:40px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;border:2px solid var(--border);
+    background:var(--bg-card);transition:all 0.3s;
+  }
+  .timeline-step.completed .timeline-dot{border-color:#22C55E;background:rgba(34,197,94,0.1)}
+  .timeline-step.current .timeline-dot{border-color:var(--accent);background:var(--accent-glow);box-shadow:0 0 20px var(--accent-glow)}
+  .timeline-step-label{font-size:12px;font-weight:500;color:var(--text-tertiary);white-space:nowrap}
+  .timeline-step.completed .timeline-step-label{color:#22C55E}
+  .timeline-step.current .timeline-step-label{color:var(--accent)}
+  .timeline-line{width:50px;height:2px;background:var(--border);margin:0 4px;flex-shrink:0}
+  .timeline-line.done{background:#22C55E}
+
+  /* ===== FOOTER ===== */
+  footer{
+    padding:40px 24px;text-align:center;
+    border-top:1px solid var(--border);margin-top:40px;
+  }
+  footer p{font-size:13px;color:var(--text-tertiary);margin-bottom:16px}
+  .footer-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .footer-btn{
+    padding:10px 24px;border-radius:10px;font-size:13px;font-weight:500;
+    border:1px solid var(--border);color:var(--text-secondary);
+    text-decoration:none;transition:all 0.2s;cursor:pointer;background:transparent;
+  }
+  .footer-btn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeSlideIn{
+    0%{opacity:0;transform:translateY(20px);filter:blur(6px)}
+    100%{opacity:1;transform:translateY(0);filter:blur(0)}
+  }
+  @keyframes pulse-dot{
+    0%,100%{opacity:1}50%{opacity:0.4}
+  }
+  .animate-in{opacity:0;transform:translateY(30px);transition:opacity 0.6s ease-out,transform 0.6s ease-out}
+  .animate-in.visible{opacity:1;transform:translateY(0)}
+
+  /* ===== RESPONSIVE ===== */
+  @media(max-width:640px){
+    section{padding:60px 16px}
+    .abstract-card{padding:24px}
+    .confusion-matrix-wrapper{flex-direction:column}
+    .pipeline{min-width:700px}
+  }
+
+  /* Toast */
+  .toast{
+    position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);
+    padding:12px 24px;border-radius:10px;font-size:14px;font-weight:500;
+    background:#22C55E;color:#fff;z-index:200;
+    transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);
+    pointer-events:none;
+  }
+  .toast.show{transform:translateX(-50%) translateY(0)}
+</style>
 </head>
 <body>
-<div class="container">
-  <div class="top-bar">
-    <div class="logo-badge">
-      <i class="ti ti-microscope"></i>
-      <h1>HemoType<span style="font-weight:400"> · ABO Research</span></h1>
-    </div>
-    <div class="theme-toggle" id="themeToggleHub">
-      <i class="ti ti-sun" id="themeIconHub"></i>
-      <span id="themeLabelHub">Light mode</span>
-    </div>
-  </div>
 
-  <!-- MAIN CARD: intro -->
-  <div class="card">
-    <div class="card-header"><i class="ti ti-news"></i><h2>CNN‑Based Blood Group Classification</h2></div>
-    <p>Automated ABO blood group detection from microscopic / agglutination images using deep learning. This project systematically addresses the lack of public ABO-labeled datasets, introduces explainable AI (Grad‑CAM), and benchmarks modern lightweight architectures. Built on a 30‑day structured research plan with IEEE‑format publication output.</p>
-    <div style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
-      <span class="badge">📊 4/8 classes (ABO / Rh+)</span>
-      <span class="badge">🧠 MobileNetV2 + EfficientNet</span>
-      <span class="badge">🔍 Grad‑CAM explainability</span>
-      <span class="badge">📄 IEEE template ready</span>
-    </div>
+<!-- Navigation -->
+<nav>
+  <div class="nav-logo">🔬 <span>BloodGroup</span>CNN</div>
+  <div class="nav-links">
+    <a href="#problem">Problem</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#abstract">Abstract</a>
+    <a href="#results">Results</a>
+    <a href="#dataset">Dataset</a>
+    <a href="#tech">Tech</a>
   </div>
+</nav>
 
-  <!-- DATASETS SECTION (from PDF) -->
-  <div class="card">
-    <div class="card-header"><i class="ti ti-database"></i><h2>Available Public Datasets</h2></div>
-    <div class="dataset-grid">
-      <div class="dataset-item"><strong>🏥 PBC Dataset (Barcelona)</strong> — 17,092 cells, 8 types, 360×363px. <br><span style="font-size:0.7rem;">DOI:10.1016/j.dib.2020.105474</span><br>✅ Primary recommendation for morphology baseline.</div>
-      <div class="dataset-item"><strong>🩸 BCCD</strong> — 364 annotated images (WBC,RBC,platelets). Object detection style.</div>
-      <div class="dataset-item"><strong>📦 TXL-PBC (Nature 2025)</strong> — Merged 4 sources, 1,260 images, 18k annotations.</div>
-      <div class="dataset-item"><strong>🔬 MLL Dataset (Nature 2025)</strong> — >40,000 single-cell images, 18 classes, largest hematology lab.</div>
-      <div class="dataset-item"><strong>🧬 Kaggle: Blood Cells Image Dataset</strong> — no direct ABO labels, usable for transfer learning.</div>
-      <div class="dataset-item"><strong>📄 IEEE 2022 Custom ABO Dataset</strong> — self-created, unpublished, 96.7% accuracy (most relevant prior work).</div>
-    </div>
-    <div class="positioning">
-      <strong>📌 Dataset strategy for your paper:</strong> Since no large public ABO-labeled microscopic dataset exists, we can either (a) construct a custom agglutination card dataset, or (b) frame the pipeline using PBC dataset for morphology + ABO inference as a novel extension. The timeline incorporates custom dataset creation and preprocessing.
-    </div>
+<!-- ===== 1. HERO ===== -->
+<section class="hero" id="hero">
+  <div class="hero-badge"><span class="dot"></span> Research Project — 2026</div>
+  <h1>CNN-Based <span class="accent">ABO Blood Group</span> Classification from Microscopic Blood Sample Images Using Transfer Learning and <span class="accent">Explainable AI</span></h1>
+  <div class="hero-meta">
+    <strong>Author Name</strong><span>·</span>Institution Name<span>·</span>2026
   </div>
+  <div class="hero-buttons">
+    <a href="#abstract" class="btn-primary">📄 Read Abstract</a>
+    <a href="#" class="btn-secondary" onclick="event.preventDefault()">🔗 View on arXiv</a>
+  </div>
+  <div class="hero-tags">
+    <span class="hero-tag active">CNN</span>
+    <span class="hero-tag active" style="animation-delay:0.5s">MobileNetV2</span>
+    <span class="hero-tag active" style="animation-delay:1s">Grad-CAM</span>
+    <span class="hero-tag active" style="animation-delay:1.5s">XAI</span>
+    <span class="hero-tag active" style="animation-delay:2s">Blood Group Detection</span>
+  </div>
+</section>
 
-  <!-- PRIOR RESEARCH + GAPS -->
-  <div class="card">
-    <div class="card-header"><i class="ti ti-file-description"></i><h2>Prior Work & Research Gaps</h2></div>
-    <p><strong>Key directly related paper:</strong> IEEE ICCCNT 2022 — custom CNN on ABO images, 96.7% accuracy, but no XAI, no Rh factor, no modern backbones.</p>
-    <div class="gap-list">
-      <div class="gap-item"><i class="ti ti-chart-bubble"></i><span><strong>Gap 1</strong> — No public ABO-labeled microscopic dataset → your contribution can be a reproducible dataset.</span></div>
-      <div class="gap-item"><i class="ti ti-eye"></i><span><strong>Gap 2</strong> — No explainability in ABO classification → add Grad‑CAM, SHAP, LIME.</span></div>
-      <div class="gap-item"><i class="ti ti-switch-horizontal"></i><span><strong>Gap 3</strong> — No comparison of MobileNetV2 / EfficientNet for ABO task.</span></div>
-      <div class="gap-item"><i class="ti ti-plus"></i><span><strong>Gap 4</strong> — Rh factor (8-class: A+,A-,B+,B-,AB+,AB-,O+,O-) unexplored.</span></div>
-      <div class="gap-item"><i class="ti ti-chart-pie"></i><span><strong>Gap 5</strong> — Class imbalance (O common, AB rare) not addressed.</span></div>
-      <div class="gap-item"><i class="ti ti-world"></i><span><strong>Gap 6</strong> — Geographic/population bias, lack of generalisation discussion.</span></div>
+<!-- ===== 2. PROBLEM STATEMENT ===== -->
+<section id="problem" class="animate-in">
+  <div class="section-label">Problem Statement</div>
+  <div class="section-title">Why does this matter?</div>
+  <div class="section-desc">Blood typing is a critical, high-stakes process — yet current methods remain largely manual, slow, and vulnerable to human error.</div>
+  <div class="problem-grid">
+    <div class="problem-card">
+      <div class="icon red">🩸</div>
+      <div class="big-num">100M+</div>
+      <h3>Transfusions Yearly</h3>
+      <p>Over 100 million blood transfusions occur globally every year. Every single one requires accurate blood typing — a mismatch can be fatal.</p>
     </div>
-  </div>
-
-  <!-- ACCURACY BENCHMARKS TABLE -->
-  <div class="card">
-    <div class="card-header"><i class="ti ti-chart-line"></i><h2>Accuracy Benchmarks to Beat</h2></div>
-    <table>
-      <thead><tr><th>Paper / Model</th><th>Task</th><th>Accuracy</th></tr></thead>
-      <tbody>
-        <tr><td>IEEE 2022 (Custom CNN)</td><td>ABO blood group</td><td><strong>96.7%</strong></td></tr>
-        <tr><td>Islam et al. 2024 (Optimized CNN+XAI)</td><td>WBC classification</td><td>99.12%</td></tr>
-        <tr><td>Gavas & Olpadkar 2021 (ensemble)</td><td>PBC cell type</td><td>99.51%</td></tr>
-        <tr><td>MobileNetV2 (2024 benchmark)</td><td>WBC</td><td>~98.58%</td></tr>
-        <tr><td>EfficientNet-B3 (2025)</td><td>Leukemia ALL</td><td>94.30% F1</td></tr>
-      </tbody>
-    </table>
-    <p>🎯 <strong>Your target:</strong> surpass 96.7% using improved preprocessing (CLAHE), transfer learning (MobileNetV2/EfficientNetB0), Grad‑CAM explainability, and proper validation.</p>
-  </div>
-
-  <!-- POSITIONING STATEMENT -->
-  <div class="card">
-    <div class="card-header"><i class="ti ti-quote"></i><h2>Positioning Statement (Abstract/Intro)</h2></div>
-    <div class="positioning">
-      “While prior studies have demonstrated CNN‑based classification of peripheral blood cell subtypes with high accuracy, the specific problem of automated ABO blood group classification from microscopic images remains underexplored, with limited publicly available labeled datasets and no work addressing explainability or comparison of modern lightweight architectures. This study proposes a CNN‑based pipeline for ABO blood group classification incorporating optimized preprocessing, transfer learning via MobileNetV2/EfficientNet, and Grad‑CAM‑based explainability, providing a transparent, efficient, and reproducible framework for AI‑assisted hematological diagnostics.”
+    <div class="problem-card">
+      <div class="icon amber">⏳</div>
+      <h3>Manual & Error-Prone</h3>
+      <p>Traditional serological testing is slow, requires trained personnel and expensive reagents, and is susceptible to human error especially in high-throughput or resource-limited settings.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon purple">🔍</div>
+      <h3>No AI Explainability</h3>
+      <p>Existing CNN-based blood group classification works report accuracy but provide no explainability. Clinicians cannot trust a black-box diagnosis — they need to see <em>why</em> the model decided.</p>
     </div>
   </div>
+</section>
 
-  <!-- PAPER STRUCTURE (IEEE) -->
-  <div class="card">
-    <div class="card-header"><i class="ti ti-layout-2"></i><h2>Suggested Paper Structure (IEEE Format)</h2></div>
-    <ul style="margin-left: 1.5rem; color: var(--text-muted);">
-      <li>1. Abstract (~250 words)</li><li>2. Introduction – importance of blood typing, AI motivation</li>
-      <li>3. Related Work – 10–15 citations (PBC, IEEE 2022, XAI papers)</li>
-      <li>4. Dataset Description – custom / PBC / agglutination, class distribution</li>
-      <li>5. Proposed Methodology – preprocessing, CNN + transfer learning, Grad‑CAM</li>
-      <li>6. Experimental Results – accuracy, precision, recall, F1, confusion matrix</li>
-      <li>7. Comparative Analysis – vs AlexNet, LeNet5, MobileNetV2 baseline</li>
-      <li>8. Discussion – gaps, limitations, interpretability</li>
-      <li>9. Conclusion & Future Work – Rh factor, real-time deployment</li>
-      <li>10. References (IEEE format, 15–20 entries)</li>
-    </ul>
-    <div class="badge" style="margin-top: 0.5rem;">📚 Recommended citations: Acevedo 2020, IEEE 2022 ABO, Islam 2024, Gavas 2021, PLOS ONE scoping review, etc.</div>
-  </div>
-
-  <!-- TIMELINE BUTTON -->
-  <div style="text-align: center; margin: 1rem 0 2rem;">
-    <button class="btn-timeline" id="showTimelineBtnMain">
-      <i class="ti ti-calendar-time"></i> View 30‑Day Research Timeline (Interactive)
-    </button>
-  </div>
-
-  <!-- FOOTER NOTE -->
-  <div style="text-align: center; font-size: 0.7rem; color: var(--text-muted); border-top: 1px solid var(--border-light); padding-top: 1rem;">
-    <i class="ti ti-brand-github"></i> Reproducible pipeline · ABO classification · Explainable AI
-  </div>
-</div>
-
-<!-- MODAL (TIMELINE) -->
-<div id="timelineModal" class="modal-overlay">
-  <div class="modal-container">
-    <div class="modal-header">
-      <h3 style="display: flex; gap: 8px;"><i class="ti ti-chart-infographic"></i> 1‑Month Research Plan — CNN Blood Group</h3>
-      <button class="close-modal" id="closeModalBtnMain">&times;</button>
+<!-- ===== 3. ARCHITECTURE / PIPELINE ===== -->
+<section id="architecture" class="animate-in">
+  <div class="section-label">Proposed Solution</div>
+  <div class="section-title">Architecture Pipeline</div>
+  <div class="section-desc">Click any step in the pipeline to see its detailed description.</div>
+  <div class="pipeline-wrapper">
+    <div class="pipeline" id="pipeline">
+      <div class="pipeline-step active" data-step="0">
+        <div class="step-icon">🔬</div>
+        <div class="step-label">Input Image</div>
+        <div class="step-sub">Microscope Slide</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step" data-step="1">
+        <div class="step-icon">⚙️</div>
+        <div class="step-label">Preprocessing</div>
+        <div class="step-sub">CLAHE + Resize</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step" data-step="2">
+        <div class="step-icon">🔄</div>
+        <div class="step-label">Augmentation</div>
+        <div class="step-sub">Flip · Rotate · Zoom</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step" data-step="3">
+        <div class="step-icon">🧠</div>
+        <div class="step-label">CNN / MobileNetV2</div>
+        <div class="step-sub">Feature Extraction</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step" data-step="4">
+        <div class="step-icon">🔥</div>
+        <div class="step-label">Grad-CAM</div>
+        <div class="step-sub">Explainability</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step" data-step="5">
+        <div class="step-icon">🩸</div>
+        <div class="step-label">Blood Group</div>
+        <div class="step-sub">A · B · AB · O</div>
+      </div>
     </div>
-    <div class="modal-body" id="modalBodyTimeline">
-      <div style="padding: 1rem;">Loading enhanced timeline...</div>
+  </div>
+  <div class="pipeline-desc" id="pipelineDesc">
+    <div class="desc-title">🔬 Input Image</div>
+    Microscopic blood smear images captured under standard laboratory conditions. Each image contains red blood cells whose surface antigen patterns determine the ABO blood group. Images are typically stained (Giemsa/Wright) and captured at 100×–400× magnification.
+  </div>
+</section>
+
+<!-- ===== 4. ABSTRACT ===== -->
+<section id="abstract" class="animate-in">
+  <div class="section-label">Abstract</div>
+  <div class="section-title">Paper Summary</div>
+  <div class="section-desc">A concise overview of the research objectives, methodology, and expected contributions.</div>
+  <div class="abstract-card">
+    <p class="abstract-text" id="abstractText">Accurate ABO blood group classification is essential for safe blood transfusions, organ transplants, and emergency medical care. Traditional serological methods are time-consuming, require specialized reagents, and are susceptible to human error, particularly in resource-limited settings. While deep learning has demonstrated remarkable success in various medical imaging tasks, its application to ABO blood group classification from microscopic images remains underexplored, and existing approaches lack the explainability necessary for clinical trust. In this paper, we propose a CNN-based framework for automated ABO blood group classification from microscopic blood sample images, leveraging transfer learning with MobileNetV2 and custom convolutional architectures. We employ CLAHE-based preprocessing, extensive data augmentation, and introduce Grad-CAM visual explanations to provide interpretable model decisions — enabling clinicians to understand which image regions drive classification outcomes. Experiments are conducted on the Barcelona PBC dataset and a custom ABO-labeled dataset, with models evaluated using accuracy, precision, recall, F1-score, and AUC-ROC metrics. Our approach aims to bridge the gap between high-performance classification and clinical explainability, offering a faster, more transparent alternative to conventional blood typing methods. To the best of our knowledge, this is the first work to combine lightweight CNN architectures with Grad-CAM explainability specifically for ABO blood group classification.</p>
+    <button class="copy-btn" id="copyBtn" onclick="copyAbstract()">📋 Copy Abstract</button>
+  </div>
+</section>
+
+<!-- ===== 5. RESULTS ===== -->
+<section id="results" class="animate-in">
+  <div class="section-label">Experimental Results</div>
+  <div class="section-title">Performance Metrics</div>
+  <div class="section-desc">Model evaluation results will be populated after the training pipeline is complete.</div>
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-value">—</div>
+      <div class="metric-label">Accuracy</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">—</div>
+      <div class="metric-label">Precision</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">—</div>
+      <div class="metric-label">Recall</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">—</div>
+      <div class="metric-label">F1-Score</div>
     </div>
   </div>
-</div>
+  <div class="confusion-matrix-wrapper">
+    <div class="confusion-section">
+      <h4>Confusion Matrix (Placeholder)</h4>
+      <div class="cm-grid">
+        <div></div>
+        <div class="cm-header">A</div>
+        <div class="cm-header">B</div>
+        <div class="cm-header">AB</div>
+        <div class="cm-header">O</div>
+
+        <div class="cm-label">A</div>
+        <div class="cm-cell" style="background:rgba(0,194,209,0.35);color:#fff">—</div>
+        <div class="cm-cell" style="background:rgba(0,194,209,0.08);color:var(--text-tertiary)">—</div>
+        <div class="cm-cell" style="background:rgba(0,194,209,0.05);color:var(--text-tertiary)">—</div>
+        <div class="cm-cell" style="background:rgba(0,194,209,0.06);color:var(--text-tertiary)">—</div>
+
+        <div class="cm-label">B</div>
+        <div class="cm-cell" style="background:rgba(0,194,209,0.07);color:var(--text-tertiary)">—</div>
+        <div class="cm-cell" style="background:rgba(0,194,209,0.35);color:#fff">—</div>
+        <div class="cm-cell" style="background:rgba(0,194,209,0.06);color:var(--text-tertiary)">—</div>
+        <div class="cm-cell" style="background:rgba(0,194,209,0.05);color:var(--text-tertiary)">—</div>
+
+        <div class="cm-label">AB</div>
+        <div class="cm-cell" style="background:rgba(0,194,209,0.05);color:var(--text-tertiary)">—</div>
+        <div class="cm-cell" style="background:rgba(0,194,209,0.06);color:var(--text-tertiary)">—</div>
+        <div class="cm-cell" style="background:rgba(0,194,209,0.35);color:#fff">—</div>
+        <div class="cm-cell" style="background:rgba(0,194,209,0.07);color:var(--text-tertiary)">—</div>
+
+        <div class="cm-label">O</div>
+        <div class="cm-cell" style="background:rgba(0,194,209,0.06);color:var(--text-tertiary)">—</div>
+        <div class="cm-cell" style="background:rgba(0,194,209,0.05);color:var(--text-tertiary)">—</div>
+        <div class="cm-cell" style="background:rgba(0,194,209,0.07);color:var(--text-tertiary)">—</div>
+        <div class="cm-cell" style="background:rgba(0,194,209,0.35);color:#fff">—</div>
+      </div>
+      <p class="cm-note">⚠️ Results will be updated after model training is complete.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 6. DATASET ===== -->
+<section id="dataset" class="animate-in">
+  <div class="section-label">Datasets</div>
+  <div class="section-title">Data Sources</div>
+  <div class="section-desc">Two complementary datasets are used to train and validate the classification pipeline.</div>
+  <div class="dataset-grid">
+    <div class="dataset-card">
+      <div class="ds-badge">Public Dataset</div>
+      <h3>Barcelona PBC Dataset</h3>
+      <p>The Peripheral Blood Cell dataset from Mendeley Data contains ~17,000 labeled blood cell images across 8 classes. Used to validate the morphology classification pipeline and feature extraction capabilities of our CNN architecture.</p>
+      <a href="#" class="ds-link" onclick="event.preventDefault()">View Dataset →</a>
+    </div>
+    <div class="dataset-card">
+      <div class="ds-badge" style="background:rgba(168,85,247,0.1);color:#A855F7">Custom Dataset</div>
+      <h3>Custom ABO-Labeled Dataset</h3>
+      <p>A purpose-built dataset of microscopic blood smear images with ABO blood group labels (A, B, AB, O). Collected under controlled laboratory conditions with expert hematologist annotation. This dataset addresses the critical gap of publicly unavailable ABO-labeled image data.</p>
+      <a href="#" class="ds-link" onclick="event.preventDefault()">View Dataset →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 7. TECH STACK ===== -->
+<section id="tech" class="animate-in">
+  <div class="section-label">Technology</div>
+  <div class="section-title">Tech Stack</div>
+  <div class="section-desc">Tools and frameworks powering this research.</div>
+  <div class="tech-grid">
+    <div class="tech-item"><div class="tech-icon">🐍</div><div class="tech-name">Python</div></div>
+    <div class="tech-item"><div class="tech-icon">🧠</div><div class="tech-name">TensorFlow / Keras</div></div>
+    <div class="tech-item"><div class="tech-icon">👁️</div><div class="tech-name">OpenCV</div></div>
+    <div class="tech-item"><div class="tech-icon">📱</div><div class="tech-name">MobileNetV2</div></div>
+    <div class="tech-item"><div class="tech-icon">🔥</div><div class="tech-name">Grad-CAM</div></div>
+    <div class="tech-item"><div class="tech-icon">📊</div><div class="tech-name">scikit-learn</div></div>
+    <div class="tech-item"><div class="tech-icon">📈</div><div class="tech-name">Matplotlib</div></div>
+    <div class="tech-item"><div class="tech-icon">📓</div><div class="tech-name">Jupyter</div></div>
+  </div>
+</section>
+
+<!-- ===== 8. PUBLICATION TIMELINE ===== -->
+<section id="timeline" class="animate-in">
+  <div class="section-label">Publication</div>
+  <div class="section-title">Target Timeline</div>
+  <div class="section-desc">Projected milestones from project inception to publication.</div>
+  <div class="timeline">
+    <div class="timeline-step current">
+      <div class="timeline-dot">🔨</div>
+      <div class="timeline-step-label">Build</div>
+    </div>
+    <div class="timeline-line"></div>
+    <div class="timeline-step">
+      <div class="timeline-dot">📄</div>
+      <div class="timeline-step-label">arXiv Upload</div>
+    </div>
+    <div class="timeline-line"></div>
+    <div class="timeline-step">
+      <div class="timeline-dot">📮</div>
+      <div class="timeline-step-label">Journal Submission</div>
+    </div>
+    <div class="timeline-line"></div>
+    <div class="timeline-step">
+      <div class="timeline-dot">🔎</div>
+      <div class="timeline-step-label">Peer Review</div>
+    </div>
+    <div class="timeline-line"></div>
+    <div class="timeline-step">
+      <div class="timeline-dot">✅</div>
+      <div class="timeline-step-label">Published</div>
+    </div>
+  </div>
+  <p style="text-align:center;margin-top:24px;font-size:14px;color:var(--text-tertiary)">
+    📍 Current stage: <strong style="color:var(--accent)">Build</strong> — Model development and dataset preparation in progress
+  </p>
+</section>
+
+<!-- ===== 9. FOOTER ===== -->
+<footer>
+  <p>Research in progress — 2026</p>
+  <div class="footer-btns">
+    <a href="#" class="footer-btn" onclick="event.preventDefault()">💻 GitHub</a>
+    <a href="#" class="footer-btn" onclick="event.preventDefault()">📄 arXiv</a>
+  </div>
+</footer>
+
+<!-- Toast -->
+<div class="toast" id="toast">Copied to clipboard ✓</div>
 
 <script>
-  // THEME LOGIC
-  function setTheme(theme) {
-    const body = document.body;
-    const icon = document.getElementById('themeIconHub');
-    const label = document.getElementById('themeLabelHub');
-    if (theme === 'dark') {
-      body.classList.add('dark');
-      localStorage.setItem('aboThemeHub', 'dark');
-      if(icon) icon.className = 'ti ti-moon';
-      if(label) label.innerText = 'Dark mode';
-    } else {
-      body.classList.remove('dark');
-      localStorage.setItem('aboThemeHub', 'light');
-      if(icon) icon.className = 'ti ti-sun';
-      if(label) label.innerText = 'Light mode';
+  // ===== Pipeline interactivity =====
+  const pipelineSteps = document.querySelectorAll('.pipeline-step');
+  const pipelineDesc = document.getElementById('pipelineDesc');
+
+  const stepDescriptions = [
+    {
+      title: '🔬 Input Image',
+      text: 'Microscopic blood smear images captured under standard laboratory conditions. Each image contains red blood cells whose surface antigen patterns determine the ABO blood group. Images are typically stained (Giemsa/Wright) and captured at 100×–400× magnification.'
+    },
+    {
+      title: '⚙️ Preprocessing (CLAHE)',
+      text: 'Images are resized to 224×224 pixels to match the CNN input dimensions. CLAHE (Contrast Limited Adaptive Histogram Equalization) is applied to enhance local contrast, making cell boundaries and antigen patterns more visible. Additional steps include Gaussian blur (3×3 kernel) for noise reduction and pixel normalization to [0, 1] range for stable training.'
+    },
+    {
+      title: '🔄 Data Augmentation',
+      text: 'To increase dataset diversity and prevent overfitting, augmentation is applied exclusively to the training set using Keras ImageDataGenerator: random rotation (±20°), horizontal flipping, zoom range (0.9–1.1×), and brightness shift (±15%). This simulates real-world variability in slide preparation and imaging conditions.'
+    },
+    {
+      title: '🧠 CNN / MobileNetV2',
+      text: 'Two architectures are trained and compared: (1) A custom CNN with Conv2D → MaxPool → BatchNorm → Dropout → Dense → Softmax layers, and (2) MobileNetV2 with pre-trained ImageNet weights via transfer learning. The MobileNetV2 base is initially frozen, then fine-tuned by unfreezing the last 20 layers. This combination provides both a lightweight baseline and a strong pre-trained feature extractor.'
+    },
+    {
+      title: '🔥 Grad-CAM Explainability',
+      text: 'Gradient-weighted Class Activation Mapping (Grad-CAM) is applied to the last convolutional layer to produce heatmaps highlighting the image regions most influential to the model\'s classification decision. This addresses the critical "black-box" problem — clinicians can visually verify that the model is attending to biologically relevant cell features rather than artifacts or background noise.'
+    },
+    {
+      title: '🩸 Blood Group Output (A / B / AB / O)',
+      text: 'The final Softmax layer outputs a probability distribution over the four ABO blood group classes: A, B, AB, and O. The class with the highest probability is the predicted blood group. Alongside the prediction, the Grad-CAM heatmap is presented as an explainability report, providing clinical transparency and enabling human-in-the-loop verification.'
     }
-  }
-  const savedTheme = localStorage.getItem('aboThemeHub');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  if (savedTheme === 'dark') setTheme('dark');
-  else if (savedTheme === 'light') setTheme('light');
-  else if (prefersDark) setTheme('dark');
-  else setTheme('light');
-  document.getElementById('themeToggleHub')?.addEventListener('click', () => {
-    const isDark = document.body.classList.contains('dark');
-    setTheme(isDark ? 'light' : 'dark');
+  ];
+
+  pipelineSteps.forEach(step => {
+    step.addEventListener('click', () => {
+      pipelineSteps.forEach(s => s.classList.remove('active'));
+      step.classList.add('active');
+      const idx = parseInt(step.dataset.step);
+      pipelineDesc.style.opacity = 0;
+      setTimeout(() => {
+        pipelineDesc.innerHTML = `<div class="desc-title">${stepDescriptions[idx].title}</div>${stepDescriptions[idx].text}`;
+        pipelineDesc.style.opacity = 1;
+      }, 200);
+    });
   });
 
-  // BUILD IMPROVED TIMELINE (integrate dataset & gap context)
-  function buildTimelineHTML() {
-    return `
-      <style>
-        .plan-modal { padding: 1rem; font-size: 13px; }
-        .phase-card { border: 1px solid var(--border-light); background: var(--bg-card); border-radius: 1rem; margin-bottom: 12px; overflow: hidden; }
-        .phase-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg-soft); border-bottom: 1px solid var(--border-light); flex-wrap: wrap; }
-        .phase-bdg { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 30px; }
-        .phase-title { font-weight: 600; font-size: 13px; }
-        .phase-days { font-size: 10px; margin-left: auto; background: var(--bg-card); padding: 2px 8px; border-radius: 30px; }
-        .tasks-list { padding: 10px 14px 12px; display: flex; flex-direction: column; gap: 8px; }
-        .task-item { display: flex; gap: 8px; font-size: 12px; color: var(--text-muted); align-items: flex-start; }
-        .task-item i { font-size: 13px; margin-top: 1px; color: var(--accent-primary); }
-        .timeline-bar-sm { display: flex; gap: 3px; margin-bottom: 12px; height: 8px; border-radius: 8px; overflow: hidden; }
-        .legend-sm { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-        .tip-note { background: var(--bg-soft); padding: 8px 12px; border-radius: 12px; border-left: 3px solid var(--accent-primary); font-size: 11px; margin-top: 8px; }
-        .divider-light { height: 1px; background: var(--border-light); margin: 0 14px; }
-      </style>
-      <div class="plan-modal">
-        <div class="timeline-bar-sm">
-          <div style="flex:5; background:#9FE1CB"></div><div style="flex:7; background:#B5D4F4"></div>
-          <div style="flex:8; background:#AFA9EC"></div><div style="flex:5; background:#FAC775"></div><div style="flex:5; background:#F4C0D1"></div>
-        </div>
-        <div class="legend-sm">
-          <span><span style="background:#9FE1CB; display:inline-block; width:10px; height:10px; border-radius:2px;"></span> Data</span>
-          <span><span style="background:#B5D4F4; display:inline-block; width:10px; height:10px;"></span> Preproc</span>
-          <span><span style="background:#AFA9EC; display:inline-block; width:10px; height:10px;"></span> Model</span>
-          <span><span style="background:#FAC775; display:inline-block; width:10px; height:10px;"></span> Optimize</span>
-          <span><span style="background:#F4C0D1; display:inline-block; width:10px; height:10px;"></span> Paper</span>
-        </div>
-        <!-- Phase 1: dataset -->
-        <div class="phase-card"><div class="phase-head"><div class="phase-bdg" style="background:#E1F5EE;color:#0F6E56">Week 1</div><span class="phase-title">📂 Dataset & literature (ABO focus)</span><span class="phase-days">Days 1–5</span></div><div class="divider-light"></div><div class="tasks-list"><div class="task-item"><i class="ti ti-database"></i> Acquire PBC dataset + custom ABO-labeled images (agglutination cards).</div><div class="task-item"><i class="ti ti-file-text"></i> Review IEEE 2022 ABO paper, XAI papers (Islam et al. 2024).</div><div class="task-item"><i class="ti ti-folder"></i> Organise into A, B, AB, O (or 8-class Rh extension).</div><div class="task-item"><i class="ti ti-chart-bar"></i> Analyse class imbalance (rare AB), plan SMOTE / weighted loss.</div><div class="task-item"><i class="ti ti-file-text"></i> Draft Introduction + Related Work (cite gaps #1-6).</div></div></div>
-        <!-- Phase 2: preprocessing & augmentation -->
-        <div class="phase-card"><div class="phase-head"><div class="phase-bdg" style="background:#E6F1FB;color:#185FA5">Week 1–2</div><span class="phase-title">🛠️ Preprocessing pipeline</span><span class="phase-days">Days 4–10</span></div><div class="divider-light"></div><div class="tasks-list"><div class="task-item"><i class="ti ti-crop"></i> Resize → 224×224, apply CLAHE & histogram equalisation (stain normalisation).</div><div class="task-item"><i class="ti ti-filter"></i> Gaussian blur / denoising (OpenCV).</div><div class="task-item"><i class="ti ti-refresh"></i> Augmentation: rotation, flip, zoom, brightness shift, elastic transforms.</div><div class="task-item"><i class="ti ti-layout-grid"></i> Train/val/test split 70/15/15; save splits with class weights.</div><div class="task-item"><i class="ti ti-chart-pie"></i> Address class imbalance via weighted categorical crossentropy.</div></div></div>
-        <!-- Phase 3: model training (custom + TL) -->
-        <div class="phase-card"><div class="phase-head"><div class="phase-bdg" style="background:#EEEDFE;color:#534AB7">Week 2–3</div><span class="phase-title">🧠 Model development & training</span><span class="phase-days">Days 8–18</span></div><div class="divider-light"></div><div class="tasks-list"><div class="task-item"><i class="ti ti-brand-python"></i> Build custom CNN (4 conv blocks) + MobileNetV2 / EfficientNetB0 (transfer learning).</div><div class="task-item"><i class="ti ti-arrows-transfer-up"></i> Compare frozen vs fine-tuned backbones.</div><div class="task-item"><i class="ti ti-player-play"></i> Train 30–50 epochs, early stopping, ReduceLROnPlateau.</div><div class="task-item"><i class="ti ti-chart-line"></i> Plot accuracy/loss; save best checkpoint (val accuracy).</div><div class="task-item"><i class="ti ti-table"></i> Confusion matrix, per-class F1, precision, recall, AUC-ROC.</div></div></div>
-        <!-- Phase 4: Explainability + Optimisation -->
-        <div class="phase-card"><div class="phase-head"><div class="phase-bdg" style="background:#FAEEDA;color:#854F0B">Week 3–4</div><span class="phase-title">🔍 Explainability (Grad-CAM) & hyperparameter tuning</span><span class="phase-days">Days 18–24</span></div><div class="divider-light"></div><div class="tasks-list"><div class="task-item"><i class="ti ti-eye"></i> Implement Grad-CAM (and optionally SHAP) to highlight agglutination regions.</div><div class="task-item"><i class="ti ti-settings"></i> Tune LR, dropout (0.3–0.5), batch size (16/32).</div><div class="task-item"><i class="ti ti-percentage"></i> Report final metrics: accuracy, sensitivity, specificity.</div><div class="task-item"><i class="ti ti-vs"></i> Comparative table: custom CNN vs AlexNet vs MobileNetV2 vs EfficientNet.</div><div class="task-item"><i class="ti ti-plus"></i> Explore 8-class Rh extension (if dataset allows).</div></div></div>
-        <!-- Phase 5: Paper -->
-        <div class="phase-card"><div class="phase-head"><div class="phase-bdg" style="background:#FBEAF0;color:#993556">Week 4</div><span class="phase-title">📄 Paper writing & arXiv submission</span><span class="phase-days">Days 24–30</span></div><div class="divider-light"></div><div class="tasks-list"><div class="task-item"><i class="ti ti-writing"></i> Write Methodology, Results, Discussion (emphasise gaps covered).</div><div class="task-item"><i class="ti ti-layout-2"></i> Use IEEE two‑column LaTeX template.</div><div class="task-item"><i class="ti ti-link"></i> Add citations: Acevedo, IEEE2022, Islam2024, Gavas2021, etc.</div><div class="task-item"><i class="ti ti-upload"></i> Upload preprint to arXiv (cs.CV / eess.IV).</div><div class="task-item"><i class="ti ti-adjustments"></i> Optional: create GitHub repo with code and preprocessed dataset.</div></div></div>
-        <div class="tip-note"><strong>💡 Research tip:</strong> Start writing from Week 1, document experimental results (including failed runs). The main novelty of your paper lies in <strong>explainability (Grad-CAM)</strong> + <strong>modern lightweight architecture comparison</strong> + addressing ABO-specific class imbalance. Target >96.7% accuracy.</div>
-      </div>
-    `;
+  // ===== Copy Abstract =====
+  function copyAbstract() {
+    const text = document.getElementById('abstractText').innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = '✓ Copied';
+      btn.classList.add('copied');
+      showToast();
+      setTimeout(() => {
+        btn.textContent = '📋 Copy Abstract';
+        btn.classList.remove('copied');
+      }, 2500);
+    });
   }
 
-  const modal = document.getElementById('timelineModal');
-  const showBtn = document.getElementById('showTimelineBtnMain');
-  const closeBtn = document.getElementById('closeModalBtnMain');
-  const modalBodyDiv = document.getElementById('modalBodyTimeline');
+  function showToast() {
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  }
 
-  function openModal() {
-    if (modalBodyDiv) modalBodyDiv.innerHTML = `<div class="timeline-embed">${buildTimelineHTML()}</div>`;
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeModal() {
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-  showBtn?.addEventListener('click', openModal);
-  closeBtn?.addEventListener('click', closeModal);
-  modal?.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal?.classList.contains('active')) closeModal(); });
+  // ===== Scroll Animations =====
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.animate-in').forEach(el => observer.observe(el));
+
+  // ===== Tag animation stagger =====
+  document.querySelectorAll('.hero-tag').forEach((tag, i) => {
+    tag.style.animationDelay = `${i * 0.6}s`;
+  });
 </script>
 </body>
 </html>

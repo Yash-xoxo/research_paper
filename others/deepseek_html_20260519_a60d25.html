@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Research Plan · CNN Blood Group Classification</title>
+  <!-- Tabler Icons (beautiful, consistent icon set) -->
+  <link rel="stylesheet" href="https://unpkg.com/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ----- LIGHT / DARK THEME VARIABLES (custom properties) ----- */
+    :root {
+      /* light theme (default) */
+      --bg-body: #f5f7fc;
+      --bg-card: #ffffff;
+      --bg-secondary: #f8fafc;
+      --border-subtle: #e9eef3;
+      --border-soft: #e2e8f0;
+      --text-primary: #0a1c2f;
+      --text-secondary: #2c3e50;
+      --text-muted: #54708f;
+      --accent-info-bg: #eef2ff;
+      --accent-info-border: #b9d0f8;
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.02);
+      --transition: all 0.2s ease;
+    }
+
+    body.dark {
+      --bg-body: #0f1219;
+      --bg-card: #1a1f2b;
+      --bg-secondary: #131824;
+      --border-subtle: #252d3a;
+      --border-soft: #2a3342;
+      --text-primary: #eceff4;
+      --text-secondary: #cbd5e6;
+      --text-muted: #8e9dbb;
+      --accent-info-bg: #1e293b;
+      --accent-info-border: #334155;
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    body {
+      background-color: var(--bg-body);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+      color: var(--text-primary);
+      line-height: 1.45;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      padding: 2rem 1.5rem;
+    }
+
+    /* custom container */
+    .research-container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* header area with theme toggle */
+    .plan-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+    .title-section h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      margin-bottom: 0.2rem;
+    }
+    .title-section p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      border-left: 3px solid #7c8db0;
+      padding-left: 0.75rem;
+      margin-top: 0.2rem;
+    }
+    .theme-toggle {
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 60px;
+      padding: 0.5rem 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(2px);
+    }
+    .theme-toggle:hover {
+      background: var(--bg-secondary);
+      border-color: var(--text-muted);
+      transform: scale(0.97);
+    }
+    .theme-toggle i {
+      font-size: 1.2rem;
+    }
+
+    /* timeline bar (visual weeks) */
+    .timeline-visual {
+      background: var(--bg-card);
+      border-radius: 20px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-sm);
+    }
+    .timeline-bar {
+      display: flex;
+      gap: 4px;
+      height: 12px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+    .bar-seg {
+      transition: all 0.2s;
+      height: 100%;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 1.8rem;
+      row-gap: 0.7rem;
+    }
+    .leg-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: var(--bg-secondary);
+      padding: 0.2rem 0.7rem;
+      border-radius: 40px;
+      letter-spacing: 0.01em;
+    }
+    .leg-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+    }
+
+    /* phase card grid (modern stacking) */
+    .phases-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    .phase {
+      background: var(--bg-card);
+      border-radius: 1.25rem;
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+    .phase:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-soft);
+      box-shadow: var(--shadow-md);
+    }
+    .phase-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 1.5rem;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .phase-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.25rem 0.9rem;
+      border-radius: 40px;
+      letter-spacing: 0.3px;
+      background: #eef2ff;
+      color: #1e3a8a;
+      transition: background 0.2s;
+    }
+    /* individual badge theme colors (light/dark adaptive) */
+    .badge-week1 { background: #E1F5EE; color: #0F6E56; }
+    .badge-week2 { background: #E6F1FB; color: #185FA5; }
+    .badge-week3 { background: #EEEDFE; color: #534AB7; }
+    .badge-week4 { background: #FAEEDA; color: #854F0B; }
+    .badge-week5 { background: #FBEAF0; color: #993556; }
+    body.dark .badge-week1 { background: #1f4e46; color: #9ae6d6; }
+    body.dark .badge-week2 { background: #1e3a5f; color: #a7d0ff; }
+    body.dark .badge-week3 { background: #2e2a5e; color: #c3befc; }
+    body.dark .badge-week4 { background: #5c3a0f; color: #fcd085; }
+    body.dark .badge-week5 { background: #632b48; color: #ffc0dd; }
+
+    .phase-title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text-primary);
+    }
+    .phase-days {
+      margin-left: auto;
+      font-size: 0.7rem;
+      font-weight: 500;
+      background: var(--bg-card);
+      padding: 0.2rem 0.7rem;
+      border-radius: 30px;
+      color: var(--text-muted);
+      border: 1px solid var(--border-soft);
+      letter-spacing: 0.2px;
+    }
+    .tasks {
+      padding: 1rem 1.5rem 1.2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .task {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      transition: transform 0.1s;
+    }
+    .task i {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: color 0.2s;
+    }
+    .task:hover i {
+      color: #667eea;
+    }
+    body.dark .task:hover i {
+      color: #9caef7;
+    }
+    .divider {
+      height: 1px;
+      background: var(--border-subtle);
+      margin: 0 1.5rem;
+    }
+
+    /* tip section */
+    .insight-tip {
+      margin-top: 0.8rem;
+      padding: 1rem 1.5rem;
+      background: var(--accent-info-bg);
+      border-left: 4px solid #3b82f6;
+      border-radius: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      box-shadow: var(--shadow-sm);
+    }
+    .insight-tip strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid var(--border-subtle);
+      margin: 0.5rem 0 1rem;
+    }
+    @media (max-width: 680px) {
+      body { padding: 1.2rem; }
+      .phase-header { flex-wrap: wrap; }
+      .phase-days { margin-left: 0; margin-top: 4px; }
+      .tasks { padding: 1rem; }
+      .phase-header { padding: 0.8rem 1rem; }
+      .legend { gap: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="research-container">
+  <div class="plan-header">
+    <div class="title-section">
+      <h1>🧬 CNN‑Based Blood Group Classification</h1>
+      <p>Structured 30‑day research pipeline · from dataset to conference paper</p>
+    </div>
+    <div class="theme-toggle" id="themeToggle" aria-label="Switch dark/light mode" role="button">
+      <i class="ti ti-sun" id="themeIcon"></i>
+      <span id="themeLabel">Light mode</span>
+    </div>
+  </div>
+
+  <!-- timeline bar with legend -->
+  <div class="timeline-visual">
+    <div class="timeline-bar">
+      <div class="bar-seg" style="flex:5; background:#9FE1CB" title="Week 1: Data collection"></div>
+      <div class="bar-seg" style="flex:7; background:#B5D4F4" title="Week 1–2: Preprocessing"></div>
+      <div class="bar-seg" style="flex:8; background:#AFA9EC" title="Week 2–3: Model training"></div>
+      <div class="bar-seg" style="flex:5; background:#FAC775" title="Week 3–4: Optimization"></div>
+      <div class="bar-seg" style="flex:5; background:#F4C0D1" title="Week 4: Paper writing"></div>
+    </div>
+    <div class="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:#9FE1CB"></div>Week 1 · Data</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#B5D4F4"></div>Week 1–2 · Preproc</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#AFA9EC"></div>Week 2–3 · Model</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#FAC775"></div>Week 3–4 · Optimize</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#F4C0D1"></div>Week 4 · Paper</div>
+    </div>
+  </div>
+
+  <!-- Phases -->
+  <div class="phases-grid">
+    <!-- Phase 1: Week 1 -->
+    <div class="phase">
+      <div class="phase-header">
+        <div class="phase-badge badge-week1">Week 1</div>
+        <span class="phase-title">📚 Dataset & literature review</span>
+        <span class="phase-days">Days 1–5</span>
+      </div>
+      <div class="divider"></div>
+      <div class="tasks">
+        <div class="task"><i class="ti ti-database"></i>Download blood smear / blood group datasets from Kaggle (ErythrocyteID, etc.)</div>
+        <div class="task"><i class="ti ti-files"></i>Read 5–8 relevant IEEE/Springer papers; note methodological gaps</div>
+        <div class="task"><i class="ti ti-folder"></i>Organise dataset into class folders (A, B, AB, O) & standardise naming</div>
+        <div class="task"><i class="ti ti-chart-bar"></i>Analyse class distribution; plan augmentation strategy if imbalanced</div>
+        <div class="task"><i class="ti ti-file-text"></i>Write Introduction + Literature Review draft (~30% of final paper)</div>
+      </div>
+    </div>
+
+    <!-- Phase 2: Week 1–2 Preprocessing pipeline -->
+    <div class="phase">
+      <div class="phase-header">
+        <div class="phase-badge badge-week2">Week 1–2</div>
+        <span class="phase-title">🖼️ Preprocessing & augmentation</span>
+        <span class="phase-days">Days 4–10</span>
+      </div>
+      <div class="divider"></div>
+      <div class="tasks">
+        <div class="task"><i class="ti ti-crop"></i>Resize all images to 224×224 px (standard input for CNNs)</div>
+        <div class="task"><i class="ti ti-adjustments"></i>Apply CLAHE & histogram equalisation for stain normalisation</div>
+        <div class="task"><i class="ti ti-filter"></i>Gaussian blur + mild denoising (OpenCV)</div>
+        <div class="task"><i class="ti ti-refresh"></i>Augmentation pipeline: rotation, flip, zoom, brightness shift</div>
+        <div class="task"><i class="ti ti-layout-grid"></i>Split data: 70% train / 15% val / 15% test; store splits with metadata</div>
+      </div>
+    </div>
+
+    <!-- Phase 3: Week 2–3 Model training -->
+    <div class="phase">
+      <div class="phase-header">
+        <div class="phase-badge badge-week3">Week 2–3</div>
+        <span class="phase-title">🧠 Model training & evaluation</span>
+        <span class="phase-days">Days 8–18</span>
+      </div>
+      <div class="divider"></div>
+      <div class="tasks">
+        <div class="task"><i class="ti ti-brand-python"></i>Build lightweight custom CNN (3–4 conv blocks) in Keras/TensorFlow</div>
+        <div class="task"><i class="ti ti-arrows-transfer-up"></i>Implement transfer learning: MobileNetV2 (frozen base) + dense head</div>
+        <div class="task"><i class="ti ti-player-play"></i>Train for 30–50 epochs with early stopping & ReduceLROnPlateau</div>
+        <div class="task"><i class="ti ti-chart-line"></i>Plot accuracy & loss curves; save best model checkpoint (.h5)</div>
+        <div class="task"><i class="ti ti-table"></i>Generate confusion matrix, classification report (per-class metrics)</div>
+      </div>
+    </div>
+
+    <!-- Phase 4: Week 3–4 Optimization & explainability -->
+    <div class="phase">
+      <div class="phase-header">
+        <div class="phase-badge badge-week4">Week 3–4</div>
+        <span class="phase-title">⚙️ Optimization & explainability</span>
+        <span class="phase-days">Days 18–24</span>
+      </div>
+      <div class="divider"></div>
+      <div class="tasks">
+        <div class="task"><i class="ti ti-settings"></i>Hyperparameter tuning: learning rate (1e-3 → 1e-5), dropout, batch size</div>
+        <div class="task"><i class="ti ti-eye"></i>Add Grad‑CAM visualisations to highlight RBC decision regions (novelty angle)</div>
+        <div class="task"><i class="ti ti-percentage"></i>Report: Accuracy, Precision, Recall, F1-score, AUC-ROC</div>
+        <div class="task"><i class="ti ti-vs"></i>Compare custom CNN vs MobileNetV2 results (inference time + accuracy table)</div>
+      </div>
+    </div>
+
+    <!-- Phase 5: Week 4 Paper writing & submission -->
+    <div class="phase">
+      <div class="phase-header">
+        <div class="phase-badge badge-week5">Week 4</div>
+        <span class="phase-title">📄 Paper drafting & arXiv upload</span>
+        <span class="phase-days">Days 24–30</span>
+      </div>
+      <div class="divider"></div>
+      <div class="tasks">
+        <div class="task"><i class="ti ti-writing"></i>Write Methodology, Results, and Discussion sections with final metrics</div>
+        <div class="task"><i class="ti ti-layout-2"></i>Use IEEE two-column conference template (LaTeX/Overleaf)</div>
+        <div class="task"><i class="ti ti-link"></i>Add IEEE‑formatted citations (10–20 references from recent literature)</div>
+        <div class="task"><i class="ti ti-upload"></i>Preprint upload to arXiv (cs.CV or eess.IV) and share on ResearchGate</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-tip">
+    <strong>✨ Key tip:</strong> Start writing your paper from Week 1 — keep a shared document with methods, results, and citations. Document each experiment outcome immediately. This parallel workflow saves 40% of time compared to last‑minute writing.
+  </div>
+  <hr>
+  <div style="font-size: 0.7rem; text-align: center; color: var(--text-muted); margin-top: 1rem; opacity: 0.7;">
+    CNN classification research plan · Blood group detection (A, B, AB, O) · Optimized for reproducibility
+  </div>
+</div>
+
+<script>
+  (function() {
+    const toggleBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeLabel = document.getElementById('themeLabel');
+    
+    // Function to set theme
+    function setTheme(theme) {
+      const root = document.body;
+      if (theme === 'dark') {
+        root.classList.add('dark');
+        localStorage.setItem('bloodGroupTheme', 'dark');
+        if (themeIcon) themeIcon.className = 'ti ti-moon';
+        if (themeLabel) themeLabel.innerText = 'Dark mode';
+      } else {
+        root.classList.remove('dark');
+        localStorage.setItem('bloodGroupTheme', 'light');
+        if (themeIcon) themeIcon.className = 'ti ti-sun';
+        if (themeLabel) themeLabel.innerText = 'Light mode';
+      }
+    }
+    
+    // Get initial theme from localStorage or system preference
+    const savedTheme = localStorage.getItem('bloodGroupTheme');
+    if (savedTheme === 'dark') {
+      setTheme('dark');
+    } else if (savedTheme === 'light') {
+      setTheme('light');
+    } else {
+      // Check system preference
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (prefersDark) {
+        setTheme('dark');
+      } else {
+        setTheme('light');
+      }
+    }
+    
+    // Toggle event
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        const isDark = document.body.classList.contains('dark');
+        if (isDark) {
+          setTheme('light');
+        } else {
+          setTheme('dark');
+        }
+      });
+    }
+    
+    // Extra: smooth transition for dynamically added content
+    const style = document.createElement('style');
+    style.textContent = `
+      .phase, .timeline-visual, .theme-toggle, .insight-tip {
+        transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.1s;
+      }
+    `;
+    document.head.appendChild(style);
+  })();
+</script>
+</body>
+</html>
